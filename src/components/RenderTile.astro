@@ -1,0 +1,91 @@
+---
+import type { Render } from "../data/content";
+interface Props { render: Render }
+const { render: r } = Astro.props;
+---
+<a class:list={["rend", `rend-${r.aspect}`]} href={`/rendus/${r.slug}`} data-render-tile>
+  <div class="rend-media">
+    <video
+      class="rend-video"
+      src={`/media/renders/${r.slug}.mp4`}
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    ></video>
+    <span class="stamp mono">{r.slug}</span>
+  </div>
+  <div class="rend-body">
+    <div class="rend-title">{r.title}</div>
+    <div class="rend-meta mono muted">
+      <span>{r.tools.join(" · ")}</span>
+      <span>{r.loop}</span>
+    </div>
+  </div>
+</a>
+
+<script>
+  const tiles = document.querySelectorAll<HTMLElement>("[data-render-tile]");
+  tiles.forEach((tile) => {
+    const video = tile.querySelector("video");
+    if (!video) return;
+    tile.addEventListener("mouseenter", () => { video.play().catch(() => {}); });
+    tile.addEventListener("mouseleave", () => { video.pause(); video.currentTime = 0; });
+    tile.addEventListener("touchstart", () => { video.play().catch(() => {}); }, { passive: true });
+    tile.addEventListener("focus", () => { video.play().catch(() => {}); });
+    tile.addEventListener("blur", () => { video.pause(); video.currentTime = 0; });
+  });
+</script>
+
+<style>
+  .rend { display: grid; gap: 12px; }
+  .rend-portrait { grid-column: span 4; }
+  .rend-landscape { grid-column: span 6; }
+  .rend-square { grid-column: span 4; }
+  /* dernier rendu seul sur sa ligne (nombre total impair) : il occupe toute la largeur */
+  .rend-landscape:nth-last-child(1):nth-child(odd) { grid-column: span 12; }
+  .rend-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--surface);
+    transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .rend-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rend-portrait .rend-media { aspect-ratio: 4/5; }
+  .rend-landscape .rend-media { aspect-ratio: 16/9; }
+  .rend-square .rend-media { aspect-ratio: 1/1; }
+  .rend:hover .rend-media { transform: translateY(-2px); }
+  .rend-media .stamp {
+    position: absolute; left: 14px; bottom: 12px;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: oklch(1 0 0 / 0.85);
+    text-shadow: 0 1px 4px oklch(0 0 0 / 0.5);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .rend-body {
+    display: flex; justify-content: space-between;
+    align-items: baseline; gap: 12px; padding-inline: 2px;
+  }
+  .rend-title {
+    font-family: var(--serif); font-style: italic;
+    font-size: var(--step-1p); font-weight: 500;
+  }
+  .rend-meta { display: flex; gap: 10px; font-size: 0.76rem; }
+  @media (max-width: 900px) {
+    .rend-portrait, .rend-square { grid-column: span 6; }
+    .rend-landscape { grid-column: span 12; }
+  }
+  @media (max-width: 560px) {
+    .rend-portrait, .rend-landscape, .rend-square { grid-column: span 12; }
+  }
+</style>

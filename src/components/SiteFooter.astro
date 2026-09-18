@@ -1,0 +1,56 @@
+---
+---
+<footer id="contact" class="foot">
+  <div class="container">
+    <div class="foot-inner">
+      <div>
+        <div class="foot-line mono muted">Écrire —</div>
+        <a href="mailto:nicolas.scheer@telecom-sudparis.eu" class="foot-mail">nicolas.scheer@telecom-sudparis.eu</a>
+      </div>
+      <ul class="foot-links mono">
+        <li><a href="https://github.com/NicolasSCH2ER" target="_blank" rel="noopener">github.com/NicolasSCH2ER</a></li>
+        <li><a href="https://www.linkedin.com/in/nicolas-scheer-334747305/" target="_blank" rel="noopener">linkedin.com/in/nicolas-scheer</a></li>
+        <li><a href="/cv.pdf">CV.pdf</a></li>
+      </ul>
+    </div>
+    <div class="foot-sig mono muted">© 2026</div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(48px, 6vw, 80px) 32px;
+    margin-top: clamp(80px, 10vw, 140px);
+  }
+  .foot-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 40px;
+  }
+  .foot-line { font-size: 0.9rem; margin-bottom: 8px; }
+  .foot-mail {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: var(--step-3);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+    transition: color 180ms ease-out;
+  }
+  .foot-mail:hover { color: var(--accent-ink); }
+  .foot-links {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: 6px;
+    text-align: right; font-size: 0.82rem; color: var(--muted);
+  }
+  .foot-links a { color: var(--ink-2); }
+  .foot-links a:hover { color: var(--accent-ink); }
+  .foot-sig { font-size: 0.76rem; }
+  @media (max-width: 640px) {
+    .foot-inner { grid-template-columns: 1fr; }
+    .foot-links { text-align: left; }
+  }
+</style>

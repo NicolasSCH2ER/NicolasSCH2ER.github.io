@@ -1,0 +1,147 @@
+export type Project = {
+  slug: string;
+  title: string;
+  year: string;
+  tag: string;
+  stack: string[];
+  status: "actif" | "en cours" | "archivé";
+  summary: string;
+  problem: string;
+  approach: string;
+  results: string;
+  github?: string;
+  image?: string;
+  videos?: string[];
+  videoLabels?: string[];
+  model?: { src: string; poster?: string; label?: string };
+  hue: number;
+};
+
+export type Render = {
+  slug: string;
+  title: string;
+  tools: string[];
+  loop: string;
+  blurb: string;
+  hue: number;
+  aspect: "portrait" | "landscape" | "square";
+};
+
+export const PROJECTS: Project[] = [
+  {
+    slug: "bourrasque",
+    title: "bourrasque_v2",
+    year: "2026",
+    tag: "Simulation fluide",
+    stack: ["C++", "CUDA", "Python", "Blender API"],
+    status: "actif",
+    summary: "Solveur de simulation fluides et matériaux (eau, élastique, sable) accéléré GPU, avec extension Blender pour l'intégration artiste.",
+    problem: "Mantaflow, le solveur natif de Blender, est CPU-only et lent à itérer ; les solveurs GPU commerciaux (Hurricane, FLIP Fluids) sont propriétaires et fermés.",
+    approach: "Solveur MLS-MPM (Material Point Method) avec transferts APIC en CUDA pur : chaque matériau — élastique corotationnel, eau, sable en cours (plasticité de Drucker-Prager) — n'est qu'une fonction de contrainte ajoutée au même pipeline particules ↔ grille. Chaque évolution de l'algorithme est d'abord prototypée et validée dans une référence NumPy avant transcription en CUDA. Extension Blender pour viewport live, colliders SDF et export de maillage.",
+    results: "SVD 3×3 GPU validée à 1,9·10⁻⁴ près de NumPy sur 5402 matrices · modèle de sable validé par angle de repos (25°/35°/45°) · 184/185 tests passés · dam-break à grille 128³ simulé jusqu'à 2,9 M particules par frame, maillage reconstruit à la volée par le mailleur Zhu-Bridson natif du solveur (jusqu'à 3,2 M triangles/frame), ~7,6 s/frame en pipeline complet simulation + reconstruction + rendu Cycles.",
+    image: "/media/projects/bourrasque.jpg",
+    videos: [
+      "/media/projects/bourrasque-dam.mp4",
+      "/media/projects/bourrasque-jelly.mp4",
+      "/media/projects/bourrasque-sand.mp4",
+      "/media/projects/bourrasque-collider.mp4",
+    ],
+    videoLabels: [
+      "Eau — dam-break, grille 128³",
+      "Élastique — chute et rebond",
+      "Sable — effondrement granulaire (Drucker-Prager)",
+      "Collider statique — éclaboussure sur rampe",
+    ],
+    model: {
+      src: "/media/models/bourrasque-collider.glb",
+      poster: "/media/models/bourrasque-collider-poster.jpg",
+      label: "collider · frame réelle · orbit",
+    },
+    hue: 220,
+  },
+  {
+    slug: "bvhnet",
+    title: "BVHNet",
+    year: "2026",
+    tag: "Moteur de rendu",
+    stack: ["C++", "CUDA", "OptiX", "OpenMP"],
+    status: "archivé",
+    summary: "Path tracer physiquement basé, en CPU (OpenMP) et GPU (OptiX / RT cores), avec import de scènes glTF exportées de Blender.",
+    problem: "Comprendre et contrôler chaque étage d'un pipeline de path tracing — construction du BVH, intersection, échantillonnage — avec l'ambition à terme de remplacer l'heuristique de traversée par un petit réseau de neurones (Neural BVH).",
+    approach: "BVH binaire construit par tri de centroïdes (SAH simplifié), intersection Möller–Trumbore, intégrateur path tracing avec Next Event Estimation et roulette russe, matériaux PBR GGX/Cook-Torrance, tone mapping ACES. Portage GPU complet via OptiX pour exploiter le hardware ray tracing.",
+    results: "Rendu GPU fonctionnel sur scènes glTF complexes (RTX 5070 Ti). Le volet Neural BVH reste un objectif de recherche affiché, pas encore implémenté.",
+    image: "/media/projects/bvhnet.jpg",
+    hue: 15,
+  },
+  {
+    slug: "hyperforge",
+    title: "hyperforge",
+    year: "2026",
+    tag: "Addon Blender",
+    stack: ["Python", "NumPy", "Blender API", "Geometry Nodes"],
+    status: "archivé",
+    summary: "Add-on Blender pour générer, animer et visualiser les 6 polytopes réguliers de dimension 4 (tesseract, 120-cell, 600-cell...).",
+    problem: "Rendre manipulables par un artiste des objets géométriques de dimension supérieure à 3, normalement réservés au calcul abstrait — utile pour des effets de morphing ou des visuels non-euclidiens.",
+    approach: "Génération algébrique exacte des sommets de chaque polytope (le 600-cell via permutations paires du nombre d'or, le 120-cell par dualité), rotation 4D composée de 6 rotations élémentaires par plan d'axes, et deux modes de visualisation : coupe par hyperplan mobile et projection perspective 4D→3D. Modules mathématiques purs NumPy testables hors Blender, découplés de l'intégration UI/Geometry Nodes. Le même socle 4D (quaternions = vecteurs de dimension 4) sert aussi à extraire des ensembles de Julia quaternioniques par isosurface (marching cubes sur un potentiel d'échappement lissé), en dehors du cadre polytopes.",
+    results: "6 polytopes fonctionnels, 2 modes de visualisation, 3 niveaux de LOD, animation par keyframe — add-on livré en une session de développement ciblée.",
+    image: "/media/projects/hyperforge.jpg",
+    videos: [
+      "/media/projects/hyperforge-cells/cell5.jpg",
+      "/media/projects/hyperforge-cells/cell8.jpg",
+      "/media/projects/hyperforge-cells/cell16.jpg",
+      "/media/projects/hyperforge-cells/cell24.jpg",
+      "/media/projects/hyperforge-cells/cell120.jpg",
+      "/media/projects/hyperforge-cells/cell600.jpg",
+      "/media/projects/hyperforge-julia/julia-a.jpg",
+      "/media/projects/hyperforge-julia/julia-b.jpg",
+      "/media/projects/hyperforge-julia/julia-c.jpg",
+    ],
+    videoLabels: [
+      "5-cell (simplexe) — 5 sommets, 10 arêtes",
+      "8-cell (tesseract) — 16 sommets, 32 arêtes",
+      "16-cell (polytope croisé) — 8 sommets, 24 arêtes",
+      "24-cell — 24 sommets, 96 arêtes",
+      "120-cell — 600 sommets, 1200 arêtes",
+      "600-cell — 120 sommets, 720 arêtes",
+      "Julia quaternionique — c = (-0.2, 0.8, 0, 0)",
+      "Julia quaternionique — c = (-0.162, 0.163, 0.56, -0.599)",
+      "Julia quaternionique — c = (-0.45, -0.447, 0.181, 0.306)",
+    ],
+    model: {
+      src: "/media/models/hyperforge-tesseract.glb",
+      poster: "/media/projects/hyperforge-cells/cell8.jpg",
+      label: "tesseract (8-cell) · orbit",
+    },
+    hue: 285,
+  },
+  {
+    slug: "rl-mesh",
+    title: "rl_mesh",
+    year: "2026",
+    tag: "Reinforcement Learning",
+    stack: ["Python", "PyTorch", "MuJoCo / MJX", "JAX"],
+    status: "en cours",
+    summary: "Un agent RL apprend la locomotion physique d'un personnage par imitation de mocap, sans key-framing manuel.",
+    problem: "Produire une locomotion de personnage physiquement plausible et stylisée (marche, vitesse et cap contrôlables) sans animation manuelle image par image.",
+    approach: "Humanoïde MuJoCo actionné par PD (PPO), entraîné par imitation directe d'un clip de mocap : résidu autour de la pose de référence, reward de suivi de pose. Étape suivante en cours : Adversarial Motion Priors (discriminateur LSGAN + reward de tâche sur vitesse/cap), migré vers JAX/MJX pour vectoriser l'entraînement de milliers d'humanoïdes en parallèle sur GPU.",
+    results: "Sur son meilleur run d'entraînement, l'agent tient la marche sans tomber sur l'intégralité de l'épisode (300/300 steps). Un script d'évaluation dédié (eval_checkpoints.py) compare tous les checkpoints d'un run pour repérer le meilleur avant un éventuel effondrement de PPO en entraînement long. Voir la démo ci-dessous.",
+    image: "/media/projects/rl-mesh.jpg",
+    videos: [
+      "/media/projects/rlmesh-loops/loop-1.gif",
+      "/media/projects/rlmesh-loops/loop-2.gif",
+      "/media/projects/rlmesh-loops/loop-3.gif",
+      "/media/projects/rlmesh-loops/loop-4.gif",
+      "/media/projects/rlmesh-loops/loop-5.gif",
+      "/media/projects/rlmesh-loops/loop-6.gif",
+    ],
+    hue: 320,
+  },
+];
+
+export const RENDERS: Render[] = [
+  { slug: "foret",           title: "Forêt",            tools: ["Blender"], loop: "20s",   blurb: "Environnement forestier procédural.",         hue: 145, aspect: "landscape" },
+  { slug: "highland",        title: "Highland",         tools: ["Blender"], loop: "15s",   blurb: "Étude de paysage écossais, lumière rasante.", hue: 40,  aspect: "landscape" },
+  { slug: "mec-qui-court",   title: "Mec qui court",     tools: ["Blender"], loop: "16s",   blurb: "Animation de personnage, cycle de course.",   hue: 25,  aspect: "landscape" },
+  { slug: "mountain",        title: "Mountain",         tools: ["Blender"], loop: "19s",   blurb: "Massif montagneux, rendu atmosphérique.",     hue: 220, aspect: "landscape" },
+  { slug: "ville-abandonnee", title: "Ville abandonnée", tools: ["Blender"], loop: "15s",   blurb: "Environnement urbain post-apocalyptique.",    hue: 55,  aspect: "landscape" },
+];

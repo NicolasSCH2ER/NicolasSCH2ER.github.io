@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import RenderTile from "../components/RenderTile.astro";
+import RendersHero from "../components/RendersHero.astro";
+import { RENDERS } from "../data/content";
+---
+<Base title="Rendus — Nom Prénom">
+  <SiteHeader />
+
+  <section class="page-head">
+    <RendersHero />
+    <div class="page-head-content container">
+      <div class="bread mono muted">
+        <a href="/">accueil</a> <span>/</span> <span>rendus</span>
+      </div>
+      <h1><em>Rendus 3D</em></h1>
+      <p class="sub">
+        Rendus persos, entre expérimentation technique et esthétique.
+        {RENDERS.length} pièces.
+      </p>
+    </div>
+  </section>
+
+  <section class="container listing">
+    <div class="rend-grid">
+      {RENDERS.map((r) => <RenderTile render={r} />)}
+    </div>
+  </section>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .page-head {
+    position: relative;
+    isolation: isolate;
+    min-height: min(720px, 78vh);
+    display: flex;
+    align-items: flex-end;
+    padding-block: clamp(80px, 12vw, 140px) clamp(80px, 10vw, 120px);
+    overflow: hidden;
+  }
+  .page-head-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 18px;
+  }
+  .bread { font-size: 0.8rem; display: flex; gap: 8px; }
+  .bread a { color: var(--muted); }
+  .bread a:hover { color: var(--accent-ink); }
+  .bread span:last-child { color: var(--ink-2); }
+  .page-head h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 1.02;
+  }
+  .page-head h1 em { font-style: italic; }
+  .sub {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+  .listing { padding-bottom: clamp(60px, 8vw, 100px); }
+  .rend-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--gap);
+  }
+</style>

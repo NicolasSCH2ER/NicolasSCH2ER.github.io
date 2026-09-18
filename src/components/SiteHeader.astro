@@ -1,0 +1,80 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+---
+<header class="site-head">
+  <div class="container inner">
+    <a href="/" class="mark">Nicolas&nbsp;Scheer</a>
+    <nav>
+      <a href="/projets" class:list={[isActive("/projets") && "is-active"]}>Projets</a>
+      <a href="/rendus" class:list={[isActive("/rendus") && "is-active"]}>Rendus</a>
+      <a href="/#contact">Contact</a>
+      <a href="/cv.pdf" class="cv">CV</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-head {
+    position: sticky;
+    top: 0;
+    background: color-mix(in oklch, var(--bg) 92%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+    z-index: 10;
+    border-bottom: 1px solid var(--line);
+  }
+  .inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: 24px 20px;
+  }
+  .mark {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  nav { display: flex; gap: 24px; align-items: baseline; }
+  nav a {
+    font-size: var(--step-1);
+    color: var(--ink-2);
+    transition: color 180ms ease-out;
+    position: relative;
+  }
+  nav a:hover { color: var(--accent-ink); }
+  nav a.is-active { color: var(--ink); }
+  nav a.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: var(--accent);
+  }
+  nav .cv {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    padding: 6px 12px;
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    color: var(--ink);
+    transition: border-color 180ms ease-out, color 180ms ease-out;
+  }
+  nav .cv:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+  @media (max-width: 640px) {
+    .inner {
+      flex-wrap: wrap;
+      row-gap: 4px;
+      padding-block: 18px 14px;
+    }
+    nav { gap: 4px 14px; flex-wrap: wrap; }
+    nav a {
+      padding-block: 12px;
+      display: inline-flex;
+      align-items: center;
+    }
+    nav .cv { padding: 12px 14px; }
+  }
+</style>

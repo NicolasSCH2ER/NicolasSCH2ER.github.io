@@ -1,0 +1,284 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { PROJECTS } from "../data/content";
+import ProjectMedia from "../components/ProjectMedia.astro";
+
+const years = [...new Set(PROJECTS.map((p) => p.year))].sort().reverse();
+const projectsByYear = years.map((y) => ({
+  year: y,
+  items: PROJECTS.filter((p) => p.year === y),
+}));
+
+const yearRange =
+  years.length > 1 ? `${years[years.length - 1]} → ${years[0]}` : years[0];
+
+const domains = [...new Set(PROJECTS.map((p) => p.tag.toLowerCase()))];
+---
+<Base title="Projets — Nicolas Scheer">
+  <SiteHeader />
+
+  <section class="proj-head container">
+    <div class="bread mono muted">
+      <a href="/">accueil</a> <span>/</span> <span>projets</span>
+    </div>
+    <p class="index mono muted">
+      sélection r&d — {String(PROJECTS.length).padStart(2, "0")} entrées — {yearRange}
+    </p>
+    <h1><em>Projets techniques</em></h1>
+    <p class="sub">
+      Recherche appliquée, outils de production, moteurs de rendu.
+      Chaque entrée liste le problème, l'approche et un résultat mesurable.
+    </p>
+    <ul class="tags mono muted" aria-label="domaines couverts">
+      {domains.map((d) => <li>{d}</li>)}
+    </ul>
+  </section>
+
+  <section class="container listing">
+    {projectsByYear.map((group) => (
+      <article class="year-chapter">
+        <aside class="year-rail mono">
+          <span class="year-num">{group.year}</span>
+          <span class="year-count">{String(group.items.length).padStart(2, "0")} entrée{group.items.length > 1 ? "s" : ""}</span>
+        </aside>
+
+        <div class="year-body">
+          {group.items.map((p, i) => (
+            i === 0 ? (
+              <a class="row feature" href={`/projets/${p.slug}`}>
+                <ProjectMedia project={p} aspect="16/11" class="feat-media" />
+                <div class="feat-body">
+                  <div class="row-meta mono muted">
+                    <span>{p.tag}</span>
+                    <span aria-hidden="true">·</span>
+                    <span class:list={["status", `status-${p.status.replace(/\s+/g, "-")}`]}>{p.status}</span>
+                  </div>
+                  <h2 class="feat-title"><em>{p.title}</em></h2>
+                  <p class="feat-summary">{p.summary}</p>
+                  <p class="feat-result mono muted">{p.results}</p>
+                  <ul class="stack mono">
+                    {p.stack.map((t) => <li>{t}</li>)}
+                  </ul>
+                </div>
+              </a>
+            ) : (
+              <a class="row compact" href={`/projets/${p.slug}`}>
+                <span class="compact-num mono muted">{String(i + 1).padStart(2, "0")}</span>
+                <div class="compact-body">
+                  <h3 class="compact-title"><em>{p.title}</em></h3>
+                  <p class="compact-summary">{p.summary}</p>
+                </div>
+                <div class="compact-meta mono muted">
+                  <span>{p.tag}</span>
+                  <span class:list={["status", `status-${p.status.replace(/\s+/g, "-")}`]}>{p.status}</span>
+                </div>
+                <span class="compact-arrow" aria-hidden="true">→</span>
+              </a>
+            )
+          ))}
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  /* ---- header ---- */
+  .proj-head {
+    padding-block: clamp(56px, 8vw, 100px) clamp(40px, 5vw, 64px);
+    display: grid;
+    gap: 16px;
+  }
+  .bread { font-size: 0.8rem; display: flex; gap: 8px; }
+  .bread a { color: var(--muted); }
+  .bread a:hover { color: var(--accent-ink); }
+  .bread span:last-child { color: var(--ink-2); }
+  .index {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+  }
+  .proj-head h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 1.02;
+    padding-bottom: 0.08em; /* italic descender clearance (skill §4.1) */
+  }
+  .proj-head h1 em { font-style: italic; }
+  .sub {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    max-width: 58ch;
+    line-height: 1.5;
+  }
+  .tags {
+    list-style: none; padding: 0; margin: 4px 0 0;
+    display: flex; gap: 16px; flex-wrap: wrap;
+    font-size: 0.78rem;
+  }
+  .tags li::before { content: "· "; color: var(--line-2); }
+
+  /* ---- listing ---- */
+  .listing { padding-bottom: clamp(80px, 10vw, 120px); }
+
+  .year-chapter {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    padding-block: clamp(32px, 5vw, 64px);
+    border-top: 1px solid var(--line);
+  }
+  .year-chapter:last-child { border-bottom: 1px solid var(--line); }
+
+  .year-rail {
+    position: sticky;
+    top: 96px;
+    align-self: start;
+    display: grid;
+    gap: 6px;
+  }
+  .year-num {
+    font-size: 1rem;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .year-count {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .year-body { display: grid; gap: clamp(28px, 4vw, 48px); min-width: 0; }
+
+  /* ---- feature row ---- */
+  .row { display: block; color: inherit; }
+  .row.feature {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: clamp(24px, 3vw, 40px);
+    align-items: end;
+    transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .row.feature:hover { transform: translateY(-2px); }
+  .row.feature:hover :global(.feat-media) { filter: brightness(1.05) saturate(1.05); }
+  :global(.feat-media) { transition: filter 240ms ease-out; }
+  .feat-body { display: grid; gap: 12px; padding-block: 4px; min-width: 0; }
+  .row-meta {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 0.78rem;
+  }
+  .feat-title {
+    font-family: var(--serif);
+    font-size: var(--step-3);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    padding-bottom: 0.08em; /* italic descender clearance */
+  }
+  .feat-title em { font-style: italic; }
+  .feat-summary {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    line-height: 1.4;
+    max-width: 38ch;
+  }
+  .feat-result { font-size: 0.82rem; max-width: 42ch; }
+  .stack {
+    list-style: none; padding: 0; margin: 6px 0 0;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    color: var(--muted); font-size: 0.76rem;
+  }
+  .stack li:not(:last-child)::after {
+    content: " ·"; margin-left: 14px; color: var(--line-2);
+  }
+
+  /* ---- compact row (no thumbnail) ---- */
+  .row.compact {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto 32px;
+    gap: clamp(16px, 2.5vw, 32px);
+    align-items: baseline;
+    padding-block: 14px 16px;
+    border-top: 1px solid var(--line);
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                color 180ms ease-out;
+  }
+  .row.compact:hover { transform: translateX(6px); color: var(--accent-ink); }
+  .compact-num {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    align-self: baseline;
+  }
+  .compact-body { display: grid; gap: 4px; min-width: 0; }
+  .compact-title {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    padding-bottom: 0.06em;
+  }
+  .compact-title em { font-style: italic; }
+  .compact-summary {
+    font-size: 0.95rem;
+    color: var(--ink-2);
+    line-height: 1.45;
+    max-width: 62ch;
+  }
+  .compact-meta {
+    display: flex; gap: 12px; align-items: baseline;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  .compact-arrow {
+    font-size: 1.1rem;
+    color: var(--muted);
+    align-self: baseline;
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                color 180ms ease-out;
+  }
+  .row.compact:hover .compact-arrow {
+    transform: translateX(4px);
+    color: var(--accent-ink);
+  }
+
+  .status { text-transform: lowercase; }
+  .status-actif { color: var(--accent-ink); }
+  .status-en-cours { color: var(--ink-2); }
+  .status-archivé { color: var(--muted); }
+
+  /* ---- responsive ---- */
+  @media (max-width: 900px) {
+    .year-chapter {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .year-rail {
+      position: static;
+      display: flex;
+      gap: 14px;
+      align-items: baseline;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+    }
+    .row.feature {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+    :global(.feat-media) { aspect-ratio: 16 / 10; }
+  }
+  @media (max-width: 640px) {
+    .row.compact {
+      grid-template-columns: 32px 1fr 20px;
+    }
+    .compact-meta {
+      grid-column: 2;
+      padding-top: 4px;
+    }
+    .compact-arrow { grid-row: 1; grid-column: 3; }
+  }
+</style>

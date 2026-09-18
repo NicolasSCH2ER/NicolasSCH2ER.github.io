@@ -1,0 +1,44 @@
+---
+import type { Project } from "../data/content";
+
+interface Props {
+  project: Project;
+  aspect?: string;
+  class?: string;
+}
+
+const { project: p, aspect = "16/10", class: className } = Astro.props;
+const src = p.videos && p.videos.length > 0 ? p.videos[0] : p.image;
+---
+
+{src ? (
+  <div class:list={["media-frame has-media", className]} style={`--media-aspect:${aspect}`}>
+    {src.endsWith(".mp4") ? (
+      <video src={src} autoplay muted loop playsinline preload="metadata" />
+    ) : (
+      <img src={src} alt={`Rendu — ${p.title}`} loading="lazy" />
+    )}
+  </div>
+) : (
+  <div class:list={["media-frame ph", className]} style={`--media-aspect:${aspect}; --h:${p.hue}`}>
+    <span class="stamp mono">still · {p.slug}</span>
+  </div>
+)}
+
+<style>
+  .media-frame {
+    aspect-ratio: var(--media-aspect);
+    border-radius: 6px;
+  }
+  .media-frame.has-media {
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .media-frame.has-media img,
+  .media-frame.has-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>

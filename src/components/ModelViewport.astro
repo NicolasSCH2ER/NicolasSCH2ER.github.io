@@ -1,0 +1,209 @@
+---
+/*
+  Viewport 3D interactif (Three.js + OrbitControls) pour explorer un maillage
+  reel du projet (export GLB) a la souris/au doigt.
+  - Boot paresseux via IntersectionObserver, WebGL standard (pas WebGPU, pour
+    la compatibilite la plus large — c'est un objet ponctuel, pas un hero).
+  - Auto-rotation lente a l'arret, coupee des que l'utilisateur interagit.
+  - Fallback image statique si prefers-reduced-motion ou WebGL indisponible.
+*/
+interface Props {
+  src: string;
+  poster?: string;
+  label?: string;
+  aspect?: string;
+  hue?: number;
+}
+const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.props;
+---
+<div
+  class="viewport"
+  data-model-viewport
+  data-src={src}
+  data-poster={poster}
+  style={`--aspect:${aspect}; --h:${hue}`}
+>
+  {poster && <img class="poster" src={poster} alt="" loading="lazy" />}
+  <canvas class="canvas"></canvas>
+  <div class="tag mono" data-status>{label}</div>
+  <div class="hint mono" data-hint>glisser pour tourner · molette pour zoomer</div>
+</div>
+
+<style>
+  .viewport {
+    position: relative;
+    aspect-ratio: var(--aspect);
+    border-radius: 6px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 80% at 20% 15%, oklch(0.72 0.09 var(--h, 30) / 0.35), transparent 60%),
+      oklch(0.16 0.01 var(--h, 30));
+    touch-action: none; /* le drag pilote la camera, pas le scroll de page */
+  }
+  .poster {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 1;
+    transition: opacity 500ms ease-out;
+  }
+  .canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 500ms ease-out;
+  }
+  .canvas:active { cursor: grabbing; }
+  .viewport[data-ready="1"] .poster { opacity: 0; }
+  .viewport[data-ready="1"] .canvas { opacity: 1; }
+
+  .tag {
+    position: absolute; left: 12px; bottom: 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: oklch(1 0 0 / 0.7);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hint {
+    position: absolute; right: 12px; bottom: 12px;
+    font-size: 10px;
+    letter-spacing: 0.01em;
+    color: oklch(1 0 0 / 0.45);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+  }
+  .viewport[data-ready="1"] .hint { opacity: 1; }
+  @media (hover: none) {
+    .hint { display: none; } /* pas de survol tactile, l'affordance ne tient pas */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .canvas, .hint { display: none; }
+    .poster { opacity: 1 !important; }
+  }
+</style>
+
+<script>
+  type ViewportEl = HTMLElement & { __booted?: boolean };
+
+  const roots = document.querySelectorAll<ViewportEl>("[data-model-viewport]");
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  roots.forEach((root) => {
+    if (prefersReduced) return; // fallback poster pur, voir CSS
+
+    const status = root.querySelector<HTMLElement>("[data-status]");
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !root.__booted) {
+          root.__booted = true;
+          io.disconnect();
+          boot(root, status).catch((err) => {
+            console.warn("[viewport] boot failed", err);
+            if (status) status.textContent = "aperçu statique";
+          });
+        }
+      }
+    }, { rootMargin: "150px" });
+
+    io.observe(root);
+  });
+
+  async function boot(root: ViewportEl, status: HTMLElement | null) {
+    const canvas = root.querySelector<HTMLCanvasElement>(".canvas");
+    const src = root.dataset.src;
+    if (!canvas || !src) return;
+
+    const THREE = await import("three");
+    const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+    const { OrbitControls } = await import("three/addons/controls/OrbitControls.js");
+
+    const rect = root.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.max(1, rect.width);
+    const h = Math.max(1, rect.height);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, w / h, 0.01, 100);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(w, h, false);
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    scene.add(new THREE.HemisphereLight(0xfff2e0, 0x1a1410, 1.1));
+    const key = new THREE.DirectionalLight(0xffe8cc, 2.4);
+    key.position.set(3, 4, 2);
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0xcfe0ff, 1.1);
+    rim.position.set(-3, 1.5, -2.5);
+    scene.add(rim);
+
+    const loader = new GLTFLoader();
+    const gltf = await loader.loadAsync(src);
+    const model = gltf.scene;
+
+    // recentre + normalise l'echelle pour que l'objet remplisse le cadre
+    // quel que soit son domaine d'origine (4D projete, ou domaine sim [0,1]^3)
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    model.position.sub(center);
+    const radius = Math.max(size.x, size.y, size.z, 0.001) / 2;
+    scene.add(model);
+
+    camera.position.set(radius * 2.4, radius * 1.7, radius * 2.6);
+    camera.lookAt(0, 0, 0);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = radius * 0.8;
+    controls.maxDistance = radius * 8;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.6;
+
+    let userInteracted = false;
+    controls.addEventListener("start", () => {
+      userInteracted = true;
+      controls.autoRotate = false;
+    });
+
+    root.dataset.ready = "1";
+    if (status) status.textContent = root.dataset.status || (status.textContent ?? "");
+
+    let running = true;
+    const onVisibility = () => { running = !document.hidden; };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const ro = new ResizeObserver(() => {
+      const r = root.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return;
+      camera.aspect = r.width / r.height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(r.width, r.height, false);
+    });
+    ro.observe(root);
+
+    const io2 = new IntersectionObserver((entries) => {
+      for (const e of entries) running = e.isIntersecting && !document.hidden;
+    }, { threshold: 0.01 });
+    io2.observe(root);
+
+    void userInteracted; // reserve pour une future UI ("reinitialiser la vue")
+
+    renderer.setAnimationLoop(() => {
+      if (!running) return;
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  }
+</script>

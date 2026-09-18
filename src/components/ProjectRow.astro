@@ -1,0 +1,70 @@
+---
+import type { Project } from "../data/content";
+import ProjectMedia from "./ProjectMedia.astro";
+interface Props { project: Project }
+const { project: p } = Astro.props;
+---
+<li class="proj">
+  <a class="proj-inner" href={`/projets/${p.slug}`}>
+    <ProjectMedia project={p} aspect="4/3" class="proj-media" />
+    <div class="proj-body">
+      <div class="proj-meta mono muted">
+        <span>{p.year}</span>
+        <span>·</span>
+        <span>{p.tag}</span>
+        <span class:list={["status", `status-${p.status.replace(/\s+/g, "-")}`]}>{p.status}</span>
+      </div>
+      <h3 class="proj-title">{p.title}</h3>
+      <p class="proj-summary">{p.summary}</p>
+      <p class="proj-result mono muted">{p.results}</p>
+      <ul class="stack mono">
+        {p.stack.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
+  </a>
+</li>
+
+<style>
+  .proj { border-top: 1px solid var(--line); }
+  .proj:last-child { border-bottom: 1px solid var(--line); }
+  .proj-inner {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: clamp(20px, 3vw, 40px);
+    padding-block: 20px;
+    align-items: start;
+    transition: background 180ms ease-out;
+  }
+  .proj-inner:hover { background: var(--surface); }
+  .proj-body { display: grid; gap: 10px; padding-block: 4px; }
+  .proj-meta {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 0.78rem; flex-wrap: wrap;
+  }
+  .proj-title {
+    font-family: var(--serif); font-style: italic;
+    font-size: var(--step-2); font-weight: 500;
+    letter-spacing: -0.02em; line-height: 1.05;
+  }
+  .proj-summary {
+    font-size: var(--step-1p); line-height: 1.45;
+    color: var(--ink-2); max-width: 58ch;
+  }
+  .proj-result { font-size: 0.82rem; max-width: 58ch; }
+  .stack {
+    list-style: none; padding: 0; margin: 6px 0 0;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    color: var(--muted); font-size: 0.78rem;
+  }
+  .stack li:not(:last-child)::after {
+    content: " ·"; margin-left: 14px; color: var(--line-2);
+  }
+  .status { text-transform: lowercase; }
+  .status-actif { color: var(--accent-ink); }
+  .status-en-cours { color: var(--ink-2); }
+  .status-archivé { color: var(--muted); }
+  @media (max-width: 640px) {
+    .proj-inner { grid-template-columns: 1fr; }
+    :global(.proj-media) { aspect-ratio: 16/10; }
+  }
+</style>

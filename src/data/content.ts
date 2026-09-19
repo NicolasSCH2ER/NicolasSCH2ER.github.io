@@ -59,12 +59,6 @@ export const PROJECTS: Project[] = [
       "Collider statique — éclaboussure sur rampe",
     ],
     mediaLabel: "4 simulations réelles du solveur — captures de rendu Cycles",
-    model: {
-      src: "/media/models/bourrasque-collider.glb",
-      poster: "/media/models/bourrasque-collider-poster.jpg",
-      label: "collider · frame réelle · orbit",
-      upAxis: "z",
-    },
     hue: 220,
   },
   {

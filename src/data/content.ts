@@ -16,7 +16,9 @@ export type Project = {
   /* Legende de la galerie. Le champ `videos` porte aussi des JPG/GIF selon le
      projet, donc le libelle ne peut pas etre deduit du nombre de fichiers. */
   mediaLabel?: string;
-  model?: { src: string; poster?: string; label?: string };
+  /* `upAxis` : axe vertical du maillage exporte. glTF impose +Y ; les exports
+     issus du solveur sont en Z-up et doivent etre redresses a l'affichage. */
+  model?: { src: string; poster?: string; label?: string; upAxis?: "y" | "z" };
   hue: number;
 };
 
@@ -61,6 +63,7 @@ export const PROJECTS: Project[] = [
       src: "/media/models/bourrasque-collider.glb",
       poster: "/media/models/bourrasque-collider-poster.jpg",
       label: "collider · frame réelle · orbit",
+      upAxis: "z",
     },
     hue: 220,
   },

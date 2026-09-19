@@ -13,14 +13,20 @@ interface Props {
   label?: string;
   aspect?: string;
   hue?: number;
+  /* Axe vertical du maillage source. glTF impose +Y ; un export Z-up
+     (domaine de simulation au sol sur XY) arrive couche sans redressement. */
+  upAxis?: "y" | "z";
 }
-const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.props;
+const {
+  src, poster, label = "viewport 3D", aspect = "4/3", hue = 30, upAxis = "y",
+} = Astro.props;
 ---
 <div
   class="viewport"
   data-model-viewport
   data-src={src}
   data-poster={poster}
+  data-up={upAxis}
   style={`--aspect:${aspect}; --h:${hue}`}
 >
   {poster && <img class="poster" src={poster} alt="" loading="lazy" />}
@@ -148,6 +154,14 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
     const loader = new GLTFLoader();
     const gltf = await loader.loadAsync(src);
     const model = gltf.scene;
+
+    // Redresse les exports Z-up avant toute mesure : glTF place le haut sur
+    // +Y, alors que le solveur exporte sa hauteur sur Z. Sans cette rotation
+    // le maillage s'affiche couche sur le flanc.
+    if (root.dataset.up === "z") {
+      model.rotation.x = -Math.PI / 2;
+      model.updateMatrixWorld(true);
+    }
 
     // recentre + normalise l'echelle pour que l'objet remplisse le cadre
     // quel que soit son domaine d'origine (4D projete, ou domaine sim [0,1]^3)

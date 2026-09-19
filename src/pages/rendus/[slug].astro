@@ -12,7 +12,7 @@ export function getStaticPaths() {
 const { render: r } = Astro.props;
 const others = RENDERS.filter((x) => x.slug !== r.slug).slice(0, 3);
 ---
-<Base title={`${r.title} — Nicolas Scheer`} description={r.blurb}>
+<Base title={`${r.title} — Nicolas Scheer`} description={r.blurb} image={`/media/renders/${r.slug}-poster.jpg`}>
   <SiteHeader />
 
   <section class="head container">

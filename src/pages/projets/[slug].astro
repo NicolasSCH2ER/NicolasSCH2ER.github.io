@@ -13,7 +13,7 @@ export function getStaticPaths() {
 const { project: p } = Astro.props;
 const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 ---
-<Base title={`${p.title} — Nicolas Scheer`} description={p.summary}>
+<Base title={`${p.title} — Nicolas Scheer`} description={p.summary} image={p.image ?? p.model?.poster}>
   <SiteHeader />
 
   <section class="head container">

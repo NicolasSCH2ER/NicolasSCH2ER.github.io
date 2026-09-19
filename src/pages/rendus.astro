@@ -6,7 +6,11 @@ import RenderTile from "../components/RenderTile.astro";
 import RendersHero from "../components/RendersHero.astro";
 import { RENDERS } from "../data/content";
 ---
-<Base title="Rendus — Nicolas Scheer">
+<Base
+  title="Rendus — Nicolas Scheer"
+  description="Rendus 3D personnels, entre experimentation technique et esthetique."
+  image={`/media/renders/${RENDERS[0]?.slug}-poster.jpg`}
+>
   <SiteHeader />
 
   <section class="page-head">

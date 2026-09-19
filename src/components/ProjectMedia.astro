@@ -1,6 +1,11 @@
 ---
 import type { Project } from "../data/content";
 
+/*
+  Vignette d'un projet : image fixe au chargement, clip lu au survol.
+  Les listes (accueil, /projets) ne doivent rien telecharger de lourd — la
+  video n'est demandee qu'a l'intention de l'utilisateur (preload="none").
+*/
 interface Props {
   project: Project;
   aspect?: string;
@@ -8,22 +13,58 @@ interface Props {
 }
 
 const { project: p, aspect = "16/10", class: className } = Astro.props;
-const src = p.videos && p.videos.length > 0 ? p.videos[0] : p.image;
+
+const still = p.image;
+const clip = p.videos?.find((v) => v.endsWith(".mp4"));
+/* repli : un projet sans still dedie mais dont la galerie est en images */
+const fallbackImage = still ?? p.videos?.find((v) => !v.endsWith(".mp4"));
 ---
 
-{src ? (
+{clip && still ? (
   <div class:list={["media-frame has-media", className]} style={`--media-aspect:${aspect}`}>
-    {src.endsWith(".mp4") ? (
-      <video src={src} autoplay muted loop playsinline preload="metadata" />
-    ) : (
-      <img src={src} alt={`Rendu — ${p.title}`} loading="lazy" />
-    )}
+    <video
+      src={clip}
+      poster={still}
+      muted
+      loop
+      playsinline
+      preload="none"
+      data-hover-clip
+    ></video>
+  </div>
+) : fallbackImage ? (
+  <div class:list={["media-frame has-media", className]} style={`--media-aspect:${aspect}`}>
+    <img src={fallbackImage} alt={`Aperçu — ${p.title}`} loading="lazy" />
   </div>
 ) : (
   <div class:list={["media-frame ph", className]} style={`--media-aspect:${aspect}; --h:${p.hue}`}>
     <span class="stamp mono">still · {p.slug}</span>
   </div>
 )}
+
+<script>
+  /* Lecture au survol et au focus clavier. Le conteneur est un <a>, donc on
+     ecoute sur le lien parent pour couvrir la tabulation autant que la souris. */
+  const clips = document.querySelectorAll<HTMLVideoElement>("[data-hover-clip]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduced) {
+    clips.forEach((video) => {
+      const zone = video.closest("a") ?? video.parentElement;
+      if (!zone) return;
+
+      const play = () => { video.play().catch(() => {}); };
+      const stop = () => { video.pause(); video.currentTime = 0; };
+
+      zone.addEventListener("mouseenter", play);
+      zone.addEventListener("mouseleave", stop);
+      zone.addEventListener("focusin", play);
+      zone.addEventListener("focusout", stop);
+      /* tactile : pas de survol, une pression lance la boucle */
+      zone.addEventListener("touchstart", play, { passive: true });
+    });
+  }
+</script>
 
 <style>
   .media-frame {

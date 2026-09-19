@@ -40,7 +40,15 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
         {p.videos.map((v, i) => (
           <figure class="video-tile">
             {v.endsWith(".mp4") ? (
-              <video src={v} autoplay muted loop playsinline preload="metadata" />
+              <video
+                src={v}
+                poster={v.replace(/\.mp4$/, "-poster.jpg")}
+                muted
+                loop
+                playsinline
+                preload="none"
+                data-play-in-view
+              />
             ) : (
               <img src={v} alt={p.videoLabels?.[i] ?? `Rendu — ${p.title}`} loading="lazy" />
             )}
@@ -111,6 +119,26 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   <SiteFooter />
 </Base>
+
+<script>
+  /* Les boucles de simulation se lancent quand elles entrent dans le champ,
+     pas au chargement : la page en compte jusqu'a quatre, et les charger
+     toutes d'emblee coutait plusieurs megaoctets avant le moindre scroll. */
+  const clips = document.querySelectorAll<HTMLVideoElement>("[data-play-in-view]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (clips.length && !reduced) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      }
+    }, { rootMargin: "100px", threshold: 0.2 });
+
+    clips.forEach((v) => io.observe(v));
+  }
+</script>
 
 <style>
   .head {

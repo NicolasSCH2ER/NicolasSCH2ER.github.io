@@ -50,6 +50,11 @@ ffmpeg -i <src> -an -vf scale=1280:-2 -c:v libx264 -crf 30 -preset slow        -
 ffmpeg -ss <25% de la durée> -i <src> -frames:v 1 -vf scale=1600:-2 -q:v 4 <slug>-poster.jpg
 ```
 
+Même principe pour les médias de projet (`public/media/projects/`) : chaque `.mp4` a un
+`<slug>-poster.jpg` à côté de lui, que la page de projet utilise en `poster`. Les clips ne
+sont ni préchargés ni lus au chargement — la vignette d'une liste démarre au survol, et
+une boucle de galerie démarre quand elle entre dans le champ.
+
 Le CRF du master se cale au VMAF contre la source (`libvmaf`), en visant ≥ 90 ;
 un plafond `-maxrate` a été essayé puis écarté, il faisait chuter la qualité sans
 gain utile puisque les masters ne se téléchargent qu'à la demande.

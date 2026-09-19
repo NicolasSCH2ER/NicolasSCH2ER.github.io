@@ -5,13 +5,16 @@ const { render: r } = Astro.props;
 ---
 <a class:list={["rend", `rend-${r.aspect}`]} href={`/rendus/${r.slug}`} data-render-tile>
   <div class="rend-media">
+    <!-- Tuile = poster statique + preview 720p muette chargee seulement au
+         survol (preload="none"). Le master 1080p ne sert que sur /rendus/<slug>. -->
     <video
       class="rend-video"
-      src={`/media/renders/${r.slug}.mp4`}
+      src={`/media/renders/${r.slug}-preview.mp4`}
+      poster={`/media/renders/${r.slug}-poster.jpg`}
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="none"
     ></video>
     <span class="stamp mono">{r.slug}</span>
   </div>

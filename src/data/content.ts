@@ -13,6 +13,9 @@ export type Project = {
   image?: string;
   videos?: string[];
   videoLabels?: string[];
+  /* Legende de la galerie. Le champ `videos` porte aussi des JPG/GIF selon le
+     projet, donc le libelle ne peut pas etre deduit du nombre de fichiers. */
+  mediaLabel?: string;
   model?: { src: string; poster?: string; label?: string };
   hue: number;
 };
@@ -52,6 +55,7 @@ export const PROJECTS: Project[] = [
       "Sable — effondrement granulaire (Drucker-Prager)",
       "Collider statique — éclaboussure sur rampe",
     ],
+    mediaLabel: "4 simulations réelles du solveur — captures de rendu Cycles",
     model: {
       src: "/media/models/bourrasque-collider.glb",
       poster: "/media/models/bourrasque-collider-poster.jpg",
@@ -107,6 +111,7 @@ export const PROJECTS: Project[] = [
       "Julia quaternionique — c = (-0.162, 0.163, 0.56, -0.599)",
       "Julia quaternionique — c = (-0.45, -0.447, 0.181, 0.306)",
     ],
+    mediaLabel: "6 polytopes réguliers 4D et 3 ensembles de Julia quaternioniques",
     model: {
       src: "/media/models/hyperforge-tesseract.glb",
       poster: "/media/projects/hyperforge-cells/cell8.jpg",
@@ -134,6 +139,7 @@ export const PROJECTS: Project[] = [
       "/media/projects/rlmesh-loops/loop-5.gif",
       "/media/projects/rlmesh-loops/loop-6.gif",
     ],
+    mediaLabel: "6 boucles d'entraînement — politique PPO en cours d'apprentissage",
     hue: 320,
   },
 ];

@@ -171,14 +171,9 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.6;
 
-    let userInteracted = false;
-    controls.addEventListener("start", () => {
-      userInteracted = true;
-      controls.autoRotate = false;
-    });
+    controls.addEventListener("start", () => { controls.autoRotate = false; });
 
     root.dataset.ready = "1";
-    if (status) status.textContent = root.dataset.status || (status.textContent ?? "");
 
     let running = true;
     const onVisibility = () => { running = !document.hidden; };
@@ -197,8 +192,6 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
       for (const e of entries) running = e.isIntersecting && !document.hidden;
     }, { threshold: 0.01 });
     io2.observe(root);
-
-    void userInteracted; // reserve pour une future UI ("reinitialiser la vue")
 
     renderer.setAnimationLoop(() => {
       if (!running) return;

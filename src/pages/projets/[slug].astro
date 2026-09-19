@@ -35,14 +35,14 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   {p.videos && p.videos.length > 1 ? (
     <section class="media media-wide">
-      <p class="media-label mono muted">{p.videos.length} rendus — simulations réelles du projet</p>
+      <p class="media-label mono muted">{p.mediaLabel ?? `${p.videos.length} rendus issus du projet`}</p>
       <div class="video-grid">
         {p.videos.map((v, i) => (
           <figure class="video-tile">
             {v.endsWith(".mp4") ? (
               <video src={v} autoplay muted loop playsinline preload="metadata" />
             ) : (
-              <img src={v} alt={`Rendu — ${p.title}`} loading="lazy" />
+              <img src={v} alt={p.videoLabels?.[i] ?? `Rendu — ${p.title}`} loading="lazy" />
             )}
             {p.videoLabels?.[i] && <figcaption class="mono muted">{p.videoLabels[i]}</figcaption>}
           </figure>

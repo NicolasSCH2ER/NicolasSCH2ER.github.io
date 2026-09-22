@@ -1,9 +1,9 @@
 ---
 import type { Render } from "../data/content";
-interface Props { render: Render }
-const { render: r } = Astro.props;
+interface Props { render: Render; base?: string }
+const { render: r, base = "" } = Astro.props;
 ---
-<a class:list={["rend", `rend-${r.aspect}`]} href={`/rendus/${r.slug}`} data-render-tile>
+<a class:list={["rend", `rend-${r.aspect}`]} href={`${base}/rendus/${r.slug}`} data-render-tile>
   <div class="rend-media">
     <!-- Tuile = poster statique + preview 720p muette chargee seulement au
          survol (preload="none"). Le master 1080p ne sert que sur /rendus/<slug>. -->

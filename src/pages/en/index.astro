@@ -1,52 +1,56 @@
 ---
-import Base from "../layouts/Base.astro";
-import SiteHeader from "../components/SiteHeader.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import ProjectRow from "../components/ProjectRow.astro";
-import RenderTile from "../components/RenderTile.astro";
-import { PROJECTS, RENDERS } from "../data/content";
+import Base from "../../layouts/Base.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import ProjectRow from "../../components/ProjectRow.astro";
+import RenderTile from "../../components/RenderTile.astro";
+import { PROJECTS_EN, RENDERS_EN } from "../../data/content.en";
 
-const featuredProjects = PROJECTS.filter((p) => p.status === "actif").slice(0, 2);
-const featuredRenders = RENDERS.slice(0, 3);
+const featuredProjects = PROJECTS_EN.filter((p) => p.status === "active").slice(0, 2);
+const featuredRenders = RENDERS_EN.slice(0, 3);
 ---
-<Base>
-  <SiteHeader />
+<Base
+  lang="en"
+  title="Nicolas Scheer — R&D VFX"
+  description="R&D VFX portfolio: ML, rendering engines, production tools."
+>
+  <SiteHeader lang="en" />
 
   <section class="intro container">
     <h1 class="lede">
-      Élève ingénieur à <em>Télécom SudParis</em>, à la recherche d'un poste en
-      R&D&nbsp;VFX. Je travaille à l'intersection du <em>machine learning</em> et
-      du rendu&nbsp;: moteurs, outils Blender, synthèse de mouvement.
+      Engineering student at <em>Télécom SudParis</em>, looking for an
+      R&D&nbsp;VFX position. I work at the intersection of <em>machine learning</em> and
+      rendering: engines, Blender tools, motion synthesis.
     </h1>
     <dl class="facts mono">
-      <div><dt>Formation</dt><dd>Diplôme d'ingénieur, Télécom SudParis — spécialisation High Tech Imaging (imagerie, vision, 3D) — diplômé en novembre 2026</dd></div>
-      <div><dt>Disponible</dt><dd>immédiatement — stage, CDD ou CDI</dd></div>
-      <div><dt>Mobilité</dt><dd>Paris — ouvert à la France entière et à l'international</dd></div>
-      <div><dt>Domaines</dt><dd>ML, rendering, motion</dd></div>
+      <div><dt>Education</dt><dd>Engineering degree, Télécom SudParis — High Tech Imaging specialization (imaging, vision, 3D) — graduating November 2026</dd></div>
+      <div><dt>Available</dt><dd>immediately — internship, fixed-term or permanent</dd></div>
+      <div><dt>Location</dt><dd>Paris — open to relocating within France or abroad</dd></div>
+      <div><dt>Focus</dt><dd>ML, rendering, motion</dd></div>
     </dl>
   </section>
 
   <section class="feature container">
     <div class="section-head">
-      <h2>Sélection — R&D</h2>
-      <a href="/projets" class="mono muted see-all">tous les projets ({PROJECTS.length}) →</a>
+      <h2>Selection — R&D</h2>
+      <a href="/en/projets" class="mono muted see-all">all projects ({PROJECTS_EN.length}) →</a>
     </div>
     <ol class="proj-list">
-      {featuredProjects.map((p) => <ProjectRow project={p} />)}
+      {featuredProjects.map((p) => <ProjectRow project={p} base="/en" lang="en" />)}
     </ol>
   </section>
 
   <section class="feature container">
     <div class="section-head">
-      <h2>Sélection — Rendus</h2>
-      <a href="/rendus" class="mono muted see-all">galerie complète ({RENDERS.length}) →</a>
+      <h2>Selection — Renders</h2>
+      <a href="/en/rendus" class="mono muted see-all">full gallery ({RENDERS_EN.length}) →</a>
     </div>
     <div class="rend-grid">
-      {featuredRenders.map((r) => <RenderTile render={r} />)}
+      {featuredRenders.map((r) => <RenderTile render={r} base="/en" />)}
     </div>
   </section>
 
-  <SiteFooter />
+  <SiteFooter lang="en" />
 </Base>
 
 <style>

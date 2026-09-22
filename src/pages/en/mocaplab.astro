@@ -1,0 +1,162 @@
+---
+import Base from "../../layouts/Base.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+
+const roles = [
+  {
+    title: "R&D Intern",
+    dates: "03/2026 – 07/2026",
+    context: "Eye-tracking motion capture data (TRC files, high-frequency facial markers) contains tracking errors — occlusions, marker slips, rigidity loss — that today have to be spotted by eye by an operator before any use in production.",
+    approach: "Built a Python ML pipeline for automatic aberration detection: supervised classifiers and regression for a fast first pass, a CNN where the signal's temporal structure carries the information. All three approaches are compared on the same feature set to pick the right complexity for each error type.",
+    result: "Model integrated into the team's production pipeline, as an aid to spotting errors rather than a replacement for human review.",
+  },
+  {
+    title: "Intern",
+    dates: "09/2025 – 10/2025",
+    context: "A sign-language dictionary built from motion capture accumulates near-identical variants of the same sign, recorded at different times — with no prior labeling of duplicates.",
+    approach: "Designed a Python ML model for motion classification and automatic deduplication: group captures that correspond to the same sign despite natural execution variation, keeping only one representative entry per sign.",
+    result: "Results and methodology presented to the research team at the end of the internship.",
+  },
+];
+---
+<Base
+  lang="en"
+  title="MocapLab — Nicolas Scheer"
+  description="Two R&D internships at MocapLab: ML-based tracking-error detection and automatic motion deduplication."
+>
+  <SiteHeader lang="en" />
+
+  <section class="head container">
+    <div class="bread mono muted">
+      <a href="/en">home</a> <span>/</span> <span>mocaplab</span>
+    </div>
+    <div class="row-meta mono muted">
+      <span>2025 – 2026</span>
+      <span aria-hidden="true">·</span>
+      <span>Aubervilliers, France</span>
+    </div>
+    <h1><em>MocapLab</em></h1>
+    <p class="summary">
+      Two R&D internships in machine learning applied to motion capture — detecting eye and
+      facial tracking errors, then automatically deduplicating motions for a sign-language
+      dictionary.
+    </p>
+    <p class="disclaimer mono muted">
+      Deliberately limited to the role and the technical approach: no data, visuals, or
+      production detail belonging to a client appears on this page.
+    </p>
+  </section>
+
+  <section class="container roles">
+    {roles.map((r) => (
+      <article class="role">
+        <div class="role-head">
+          <h2>{r.title}</h2>
+          <span class="dates mono muted">{r.dates}</span>
+        </div>
+        <div class="role-grid">
+          <div class="role-block">
+            <h3 class="mono muted">Context</h3>
+            <p>{r.context}</p>
+          </div>
+          <div class="role-block">
+            <h3 class="mono muted">Approach</h3>
+            <p>{r.approach}</p>
+          </div>
+          <div class="role-block">
+            <h3 class="mono muted">Result</h3>
+            <p>{r.result}</p>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="container more">
+    <a href="/en/projets" class="mono muted see-all">← back to personal projects</a>
+  </section>
+
+  <SiteFooter lang="en" />
+</Base>
+
+<style>
+  .head {
+    padding-block: clamp(56px, 8vw, 100px) clamp(28px, 4vw, 40px);
+    display: grid;
+    gap: 14px;
+  }
+  .bread { font-size: 0.8rem; display: flex; gap: 8px; }
+  .bread a { color: var(--muted); }
+  .bread a:hover { color: var(--accent-ink); }
+  .bread span:last-child { color: var(--ink-2); }
+  .row-meta { display: flex; gap: 10px; align-items: baseline; font-size: 0.82rem; }
+  .head h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 1.02;
+    padding-bottom: 0.08em;
+  }
+  .head h1 em { font-style: italic; }
+  .summary {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    max-width: 62ch;
+    line-height: 1.5;
+  }
+  .disclaimer {
+    font-size: 0.78rem;
+    max-width: 62ch;
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  .roles {
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .role {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(24px, 3vw, 32px);
+  }
+  .role-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: clamp(16px, 2.5vw, 24px);
+  }
+  .role-head h2 {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .dates { font-size: 0.82rem; white-space: nowrap; }
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3vw, 40px);
+  }
+  .role-block h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .role-block p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .more { padding-bottom: clamp(64px, 8vw, 100px); }
+  .see-all { font-size: 0.86rem; transition: color 180ms ease-out; }
+  .see-all:hover { color: var(--accent-ink); }
+
+  @media (max-width: 800px) {
+    .role-grid { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>

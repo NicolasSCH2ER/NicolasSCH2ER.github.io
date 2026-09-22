@@ -1,9 +1,9 @@
 ---
-import Base from "../layouts/Base.astro";
-import SiteHeader from "../components/SiteHeader.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import { PROJECTS } from "../data/content";
-import ProjectMedia from "../components/ProjectMedia.astro";
+import Base from "../../layouts/Base.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { PROJECTS_EN as PROJECTS } from "../../data/content.en";
+import ProjectMedia from "../../components/ProjectMedia.astro";
 
 const years = [...new Set(PROJECTS.map((p) => p.year))].sort().reverse();
 const projectsByYear = years.map((y) => ({
@@ -21,25 +21,26 @@ const domains = [...new Set(PROJECTS.map((p) => p.tag.toLowerCase()))];
 const singleYear = years.length === 1;
 ---
 <Base
-  title="Projets — Nicolas Scheer"
-  description="Recherche appliquee, outils de production, moteurs de rendu : les projets techniques de Nicolas Scheer."
+  lang="en"
+  title="Projects — Nicolas Scheer"
+  description="Applied research, production tools, rendering engines: Nicolas Scheer's technical projects."
   image={PROJECTS[0]?.image}
 >
-  <SiteHeader />
+  <SiteHeader lang="en" />
 
   <section class="proj-head container">
     <div class="bread mono muted">
-      <a href="/">accueil</a> <span>/</span> <span>projets</span>
+      <a href="/en">home</a> <span>/</span> <span>projects</span>
     </div>
     <p class="index mono muted">
-      sélection r&d — {String(PROJECTS.length).padStart(2, "0")} entrées — {yearRange}
+      r&d selection — {String(PROJECTS.length).padStart(2, "0")} entries — {yearRange}
     </p>
-    <h1><em>Projets techniques</em></h1>
+    <h1><em>Technical projects</em></h1>
     <p class="sub">
-      Recherche appliquée, outils de production, moteurs de rendu.
-      Chaque entrée liste le problème, l'approche et un résultat mesurable.
+      Applied research, production tools, rendering engines.
+      Each entry lists the problem, the approach and a measurable result.
     </p>
-    <ul class="tags mono muted" aria-label="domaines couverts">
+    <ul class="tags mono muted" aria-label="covered domains">
       {domains.map((d) => <li>{d}</li>)}
     </ul>
   </section>
@@ -49,14 +50,14 @@ const singleYear = years.length === 1;
       <article class:list={["year-chapter", singleYear && "no-rail"]}>
         <aside class="year-rail mono">
           <span class="year-num">{group.year}</span>
-          <span class="year-count">{String(group.items.length).padStart(2, "0")} entrée{group.items.length > 1 ? "s" : ""}</span>
+          <span class="year-count">{String(group.items.length).padStart(2, "0")} entr{group.items.length > 1 ? "ies" : "y"}</span>
         </aside>
 
         <div class="year-body">
           {group.items.map((p, i) => (
             i === 0 ? (
-              <a class="row feature" href={`/projets/${p.slug}`}>
-                <ProjectMedia project={p} aspect="16/11" class="feat-media" />
+              <a class="row feature" href={`/en/projets/${p.slug}`}>
+                <ProjectMedia project={p} aspect="16/11" class="feat-media" lang="en" />
                 <div class="feat-body">
                   <div class="row-meta mono muted">
                     <span>{p.tag}</span>
@@ -72,7 +73,7 @@ const singleYear = years.length === 1;
                 </div>
               </a>
             ) : (
-              <a class="row compact" href={`/projets/${p.slug}`}>
+              <a class="row compact" href={`/en/projets/${p.slug}`}>
                 <span class="compact-num mono muted">{String(i + 1).padStart(2, "0")}</span>
                 <div class="compact-body">
                   <h3 class="compact-title"><em>{p.title}</em></h3>
@@ -91,7 +92,7 @@ const singleYear = years.length === 1;
     ))}
   </section>
 
-  <SiteFooter />
+  <SiteFooter lang="en" />
 </Base>
 
 <style>

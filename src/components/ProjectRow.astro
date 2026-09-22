@@ -1,12 +1,12 @@
 ---
 import type { Project } from "../data/content";
 import ProjectMedia from "./ProjectMedia.astro";
-interface Props { project: Project }
-const { project: p } = Astro.props;
+interface Props { project: Project; base?: string; lang?: "fr" | "en" }
+const { project: p, base = "", lang = "fr" } = Astro.props;
 ---
 <li class="proj">
-  <a class="proj-inner" href={`/projets/${p.slug}`}>
-    <ProjectMedia project={p} aspect="4/3" class="proj-media" />
+  <a class="proj-inner" href={`${base}/projets/${p.slug}`}>
+    <ProjectMedia project={p} aspect="4/3" class="proj-media" lang={lang} />
     <div class="proj-body">
       <div class="proj-meta mono muted">
         <span>{p.year}</span>
@@ -62,7 +62,10 @@ const { project: p } = Astro.props;
   .status { text-transform: lowercase; }
   .status-actif { color: var(--accent-ink); }
   .status-en-cours { color: var(--ink-2); }
-  .status-archivé { color: var(--muted); }
+  .status-v1-terminée { color: var(--muted); }
+  .status-active { color: var(--accent-ink); }
+  .status-in-progress { color: var(--ink-2); }
+  .status-v1-done { color: var(--muted); }
   @media (max-width: 640px) {
     .proj-inner { grid-template-columns: 1fr; }
     :global(.proj-media) { aspect-ratio: 16/10; }

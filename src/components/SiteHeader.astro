@@ -1,16 +1,29 @@
 ---
+import { UI, otherLangPath, type Lang } from "../i18n/ui";
+
+interface Props { lang?: Lang }
+const { lang = "fr" } = Astro.props;
+const t = UI[lang];
+const base = lang === "en" ? "/en" : "";
+
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isActive = (href: string) =>
-  href === "/" ? path === "/" : path.startsWith(href);
+  href === base || href === `${base}/` ? path === (base || "/") : path.startsWith(href);
+
+const switchHref = otherLangPath(Astro.url.pathname, lang);
 ---
 <header class="site-head">
   <div class="container inner">
-    <a href="/" class="mark">Nicolas&nbsp;Scheer</a>
+    <a href={base || "/"} class="mark">Nicolas&nbsp;Scheer</a>
     <nav>
-      <a href="/projets" class:list={[isActive("/projets") && "is-active"]}>Projets</a>
-      <a href="/rendus" class:list={[isActive("/rendus") && "is-active"]}>Rendus</a>
-      <a href="/#contact">Contact</a>
-      <a href="/cv.pdf" class="cv">CV</a>
+      <a href={`${base}/projets`} class:list={[isActive(`${base}/projets`) && "is-active"]}>{t.nav.projects}</a>
+      <a href={`${base}/rendus`} class:list={[isActive(`${base}/rendus`) && "is-active"]}>{t.nav.renders}</a>
+      <a href={`${base}/mocaplab`} class:list={[isActive(`${base}/mocaplab`) && "is-active"]}>{t.nav.mocaplab}</a>
+      <a href={`${base}/#contact`}>{t.nav.contact}</a>
+      <a href="/cv.pdf" class="cv">{t.nav.cv}</a>
+      <a href={switchHref} class="lang" rel="alternate" hreflang={lang === "fr" ? "en" : "fr"}>
+        {lang === "fr" ? "EN" : "FR"}
+      </a>
     </nav>
   </div>
 </header>
@@ -62,6 +75,16 @@ const isActive = (href: string) =>
     transition: border-color 180ms ease-out, color 180ms ease-out;
   }
   nav .cv:hover { border-color: var(--accent); color: var(--accent-ink); }
+  nav .lang {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 5px 9px;
+  }
+  nav .lang:hover { border-color: var(--accent); color: var(--accent-ink); }
 
   @media (max-width: 640px) {
     .inner {

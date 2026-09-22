@@ -4,7 +4,9 @@ export type Project = {
   year: string;
   tag: string;
   stack: string[];
-  status: "actif" | "en cours" | "archivé";
+  /* string libre (pas d'union stricte) : la version anglaise (content.en.ts)
+     doit pouvoir porter ses propres libellés de statut sans forcer un cast. */
+  status: string;
   summary: string;
   problem: string;
   approach: string;
@@ -43,7 +45,7 @@ export const PROJECTS: Project[] = [
     summary: "Solveur de simulation fluides et matériaux (eau, élastique, sable) accéléré GPU, avec extension Blender pour l'intégration artiste.",
     problem: "Mantaflow, le solveur natif de Blender, est CPU-only et lent à itérer ; les solveurs GPU commerciaux (Hurricane, FLIP Fluids) sont propriétaires et fermés.",
     approach: "Solveur MLS-MPM (Material Point Method) avec transferts APIC en CUDA pur : chaque matériau — élastique corotationnel, eau, sable en cours (plasticité de Drucker-Prager) — n'est qu'une fonction de contrainte ajoutée au même pipeline particules ↔ grille. Chaque évolution de l'algorithme est d'abord prototypée et validée dans une référence NumPy avant transcription en CUDA. Extension Blender pour viewport live, colliders SDF et export de maillage.",
-    results: "SVD 3×3 GPU validée à 1,9·10⁻⁴ près de NumPy sur 5402 matrices · modèle de sable validé par angle de repos (25°/35°/45°) · 184/185 tests passés · dam-break à grille 128³ simulé jusqu'à 2,9 M particules par frame, maillage reconstruit à la volée par le mailleur Zhu-Bridson natif du solveur (jusqu'à 3,2 M triangles/frame), ~7,6 s/frame en pipeline complet simulation + reconstruction + rendu Cycles.",
+    results: "SVD 3×3 GPU validée à 1,9·10⁻⁴ près de NumPy sur 5402 matrices · modèle de sable validé par angle de repos (25°/35°/45°) · 184/185 tests passés (le dernier est un test d'interop qui saute proprement quand sa fixture binaire de 600 Mo n'est pas régénérée localement) · dam-break à grille 128³ simulé jusqu'à 2,9 M particules par frame, maillage reconstruit à la volée par le mailleur Zhu-Bridson natif du solveur (jusqu'à 3,2 M triangles/frame), ~7,6 s/frame en pipeline complet simulation + reconstruction + rendu Cycles.",
     github: "https://github.com/NicolasSCH2ER/bourrasque_v2",
     image: "/media/projects/bourrasque.jpg",
     videos: [
@@ -67,7 +69,7 @@ export const PROJECTS: Project[] = [
     year: "2026",
     tag: "Moteur de rendu",
     stack: ["C++", "CUDA", "OptiX", "OpenMP"],
-    status: "archivé",
+    status: "v1 terminée",
     summary: "Path tracer physiquement basé, en CPU (OpenMP) et GPU (OptiX / RT cores), avec import de scènes glTF exportées de Blender.",
     problem: "Comprendre et contrôler chaque étage d'un pipeline de path tracing — construction du BVH, intersection, échantillonnage — avec l'ambition à terme de remplacer l'heuristique de traversée par un petit réseau de neurones (Neural BVH).",
     approach: "BVH binaire construit par tri de centroïdes (SAH simplifié), intersection Möller–Trumbore, intégrateur path tracing avec Next Event Estimation et roulette russe, matériaux PBR GGX/Cook-Torrance, tone mapping ACES. Portage GPU complet via OptiX pour exploiter le hardware ray tracing.",
@@ -82,7 +84,7 @@ export const PROJECTS: Project[] = [
     year: "2026",
     tag: "Addon Blender",
     stack: ["Python", "NumPy", "Blender API", "Geometry Nodes"],
-    status: "archivé",
+    status: "v1 terminée",
     summary: "Add-on Blender pour générer, animer et visualiser les 6 polytopes réguliers de dimension 4 (tesseract, 120-cell, 600-cell...).",
     problem: "Rendre manipulables par un artiste des objets géométriques de dimension supérieure à 3, normalement réservés au calcul abstrait — utile pour des effets de morphing ou des visuels non-euclidiens.",
     approach: "Génération algébrique exacte des sommets de chaque polytope (le 600-cell via permutations paires du nombre d'or, le 120-cell par dualité), rotation 4D composée de 6 rotations élémentaires par plan d'axes, et deux modes de visualisation : coupe par hyperplan mobile et projection perspective 4D→3D. Modules mathématiques purs NumPy testables hors Blender, découplés de l'intégration UI/Geometry Nodes. Le même socle 4D (quaternions = vecteurs de dimension 4) sert aussi à extraire des ensembles de Julia quaternioniques par isosurface (marching cubes sur un potentiel d'échappement lissé), en dehors du cadre polytopes.",
@@ -140,6 +142,36 @@ export const PROJECTS: Project[] = [
     ],
     mediaLabel: "6 boucles d'entraînement — politique PPO en cours d'apprentissage",
     hue: 320,
+  },
+  {
+    slug: "erosion-hydraulique",
+    title: "Érosion hydraulique",
+    year: "2026",
+    tag: "Addon Blender",
+    stack: ["Python", "Blender API", "NumPy"],
+    status: "v1 terminée",
+    summary: "Extension Blender 5.0 de simulation d'érosion sur heightmaps, avec deux modèles : particules individuelles et ruissellement sur grille.",
+    problem: "Blender n'a pas d'outil natif d'érosion physiquement plausible : les terrains procéduraux (bruit + displace) restent lisses et sans réseau de drainage cohérent, contrairement à un vrai relief façonné par l'eau.",
+    approach: "Deux modèles complémentaires. Particle (Beyer) : chaque goutte suit le gradient de pente avec inertie, érode selon sa capacité de transport libre et dépose en ralentissant, sédiments interpolés bilinéairement sur la grille — bon pour des ravines fines et localisées. Grid (WaterSed, d'après BRGM/Landemaine et al.) : simule un évènement pluvieux complet sur tout le terrain — priority-flood (Wang & Liu 2006) pour combler les cuvettes, routage Multiple Flow Direction (Freeman 1991) pour un écoulement naturel plutôt qu'un D8 à direction unique, vitesse par la formule de Manning, érosion diffuse (splash) et concentrée (chenaux), transport et dépôt selon la capacité de charge.",
+    results: "8 paramètres exposés pour Particle, 13 pour WaterSed, 3 maps de sortie configurables (érosion, dépôt, ruissellement en échelle logarithmique) stockées directement en bpy.data.images. Portage complet sur la nouvelle API Blender 5.0.",
+    github: "https://github.com/NicolasSCH2ER/Hydraulic-Erosion",
+    image: "/media/projects/erosion.jpg",
+    mediaLabel: "Carte de ruissellement réelle — sortie du modèle WaterSed (Grid)",
+    hue: 95,
+  },
+  {
+    slug: "blender-version-manager",
+    title: "Blender Version Manager",
+    year: "2026",
+    tag: "Outil pipeline",
+    stack: ["Python", "PyQt6"],
+    status: "v1 terminée",
+    summary: "Gestionnaire de versions pour fichiers .blend : détection automatique de nomenclature, statuts de revue et interface graphique pensée pipeline VFX.",
+    problem: "Sans Perforce ni Shotgun, une petite équipe ou un solo gère souvent ses versions de fichiers .blend à la main — nommage incohérent (_FINAL, _BACKUP, espaces), purge manuelle sans protection des versions actives, aucun suivi de statut de revue.",
+    approach: "Détection automatique de la convention de nommage parmi 8 patterns courants (scene_v001, scene-v001, sceneV001…), sur une architecture modulaire séparant le cœur (détection, opérations de version, statuts, assets liés) de l'interface PyQt6. Assistant de nommage qui valide, signale et corrige automatiquement les fichiers non conformes. Suivi de statut de revue (WIP / prêt pour revue / approuvé / rejeté) avec filtrage. Structure hiérarchique Show → Séquence → Shot avec détection automatique des dossiers renders/ et cache/ colocalisés. Nettoyage intelligent en dry-run, versions actives protégées.",
+    results: "v2.2, thèmes clair/sombre, export de rapports JSON/CSV, 32 tests unitaires et d'intégration couvrant chaque module (détection de patterns, opérations de fichiers, statuts, assets liés, assistant de nommage).",
+    github: "https://github.com/NicolasSCH2ER/Blender_Version_manager",
+    hue: 205,
   },
 ];
 

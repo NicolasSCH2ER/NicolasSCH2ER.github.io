@@ -1,10 +1,10 @@
 ---
-import Base from "../../layouts/Base.astro";
-import SiteHeader from "../../components/SiteHeader.astro";
-import SiteFooter from "../../components/SiteFooter.astro";
-import { PROJECTS } from "../../data/content";
-import ProjectMedia from "../../components/ProjectMedia.astro";
-import ModelViewport from "../../components/ModelViewport.astro";
+import Base from "../../../layouts/Base.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import { PROJECTS_EN as PROJECTS } from "../../../data/content.en";
+import ProjectMedia from "../../../components/ProjectMedia.astro";
+import ModelViewport from "../../../components/ModelViewport.astro";
 
 export function getStaticPaths() {
   return PROJECTS.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
@@ -13,12 +13,12 @@ export function getStaticPaths() {
 const { project: p } = Astro.props;
 const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 ---
-<Base title={`${p.title} — Nicolas Scheer`} description={p.summary} image={p.image ?? p.model?.poster}>
-  <SiteHeader />
+<Base lang="en" title={`${p.title} — Nicolas Scheer`} description={p.summary} image={p.image ?? p.model?.poster}>
+  <SiteHeader lang="en" />
 
   <section class="head container">
     <div class="bread mono muted">
-      <a href="/">accueil</a> <span>/</span> <a href="/projets">projets</a> <span>/</span> <span>{p.slug}</span>
+      <a href="/en">home</a> <span>/</span> <a href="/en/projets">projects</a> <span>/</span> <span>{p.slug}</span>
     </div>
     <div class="row-meta mono muted">
       <span>{p.year}</span>
@@ -35,7 +35,7 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   {p.videos && p.videos.length > 1 ? (
     <section class="media media-wide">
-      <p class="media-label mono muted">{p.mediaLabel ?? `${p.videos.length} rendus issus du projet`}</p>
+      <p class="media-label mono muted">{p.mediaLabel ?? `${p.videos.length} renders from the project`}</p>
       <div class="video-grid">
         {p.videos.map((v, i) => (
           <figure class="video-tile">
@@ -50,7 +50,7 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
                 data-play-in-view
               />
             ) : (
-              <img src={v} alt={p.videoLabels?.[i] ?? `Rendu — ${p.title}`} loading="lazy" />
+              <img src={v} alt={p.videoLabels?.[i] ?? `Render — ${p.title}`} loading="lazy" />
             )}
             {p.videoLabels?.[i] && <figcaption class="mono muted">{p.videoLabels[i]}</figcaption>}
           </figure>
@@ -65,7 +65,7 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   {p.model && (
     <section class="container viewport-section">
-      <p class="media-label mono muted">viewport 3D — maillage réel exporté du projet, navigable à la souris</p>
+      <p class="media-label mono muted">3D viewport — real mesh exported from the project, navigable with the mouse</p>
       <ModelViewport
         src={p.model.src}
         poster={p.model.poster}
@@ -80,33 +80,33 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
   <section class="container detail">
     <div class="detail-grid">
       <div class="detail-block">
-        <h2 class="mono muted">Problème</h2>
+        <h2 class="mono muted">Problem</h2>
         <p>{p.problem}</p>
       </div>
       <div class="detail-block">
-        <h2 class="mono muted">Approche</h2>
+        <h2 class="mono muted">Approach</h2>
         <p>{p.approach}</p>
       </div>
       <div class="detail-block">
-        <h2 class="mono muted">Résultats</h2>
+        <h2 class="mono muted">Results</h2>
         <p>{p.results}</p>
       </div>
     </div>
     {p.github && (
-      <a href={p.github} class="github-link mono" target="_blank" rel="noopener">voir le code →</a>
+      <a href={p.github} class="github-link mono" target="_blank" rel="noopener">view code →</a>
     )}
   </section>
 
   {others.length > 0 && (
     <section class="container more">
       <div class="section-head">
-        <h2>Autres projets</h2>
-        <a href="/projets" class="mono muted see-all">tous les projets →</a>
+        <h2>Other projects</h2>
+        <a href="/en/projets" class="mono muted see-all">all projects →</a>
       </div>
       <ul class="more-list">
         {others.map((o) => (
           <li>
-            <a href={`/projets/${o.slug}`} class="more-row">
+            <a href={`/en/projets/${o.slug}`} class="more-row">
               <span class="more-title"><em>{o.title}</em></span>
               <span class="more-summary muted">{o.summary}</span>
               <span class="more-arrow" aria-hidden="true">→</span>
@@ -117,7 +117,7 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
     </section>
   )}
 
-  <SiteFooter />
+  <SiteFooter lang="en" />
 </Base>
 
 <script>

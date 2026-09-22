@@ -1,10 +1,14 @@
 ---
+import { UI, type Lang } from "../i18n/ui";
+interface Props { lang?: Lang }
+const { lang = "fr" } = Astro.props;
+const t = UI[lang];
 ---
 <footer id="contact" class="foot">
   <div class="container">
     <div class="foot-inner">
       <div>
-        <div class="foot-line mono muted">Écrire —</div>
+        <div class="foot-line mono muted">{t.footer.write}</div>
         <a href="mailto:nicolasscheer@free.fr" class="foot-mail">nicolasscheer@free.fr</a>
       </div>
       <ul class="foot-links mono">

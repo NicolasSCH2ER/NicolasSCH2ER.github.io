@@ -1,0 +1,113 @@
+---
+import Base from "../../../layouts/Base.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import RenderTile from "../../../components/RenderTile.astro";
+import { RENDERS_EN as RENDERS } from "../../../data/content.en";
+
+export function getStaticPaths() {
+  return RENDERS.map((r) => ({ params: { slug: r.slug }, props: { render: r } }));
+}
+
+const { render: r } = Astro.props;
+const others = RENDERS.filter((x) => x.slug !== r.slug).slice(0, 3);
+---
+<Base lang="en" title={`${r.title} — Nicolas Scheer`} description={r.blurb} image={`/media/renders/${r.slug}-poster.jpg`}>
+  <SiteHeader lang="en" />
+
+  <section class="head container">
+    <div class="bread mono muted">
+      <a href="/en">home</a> <span>/</span> <a href="/en/rendus">renders</a> <span>/</span> <span>{r.slug}</span>
+    </div>
+    <h1><em>{r.title}</em></h1>
+    <div class="meta mono muted">
+      <span>{r.tools.join(" · ")}</span>
+      <span aria-hidden="true">·</span>
+      <span>{r.loop}</span>
+    </div>
+    <p class="blurb">{r.blurb}</p>
+  </section>
+
+  <section class="container player">
+    <video
+      class="main-video"
+      src={`/media/renders/${r.slug}.mp4`}
+      poster={`/media/renders/${r.slug}-poster.jpg`}
+      controls
+      loop
+      playsinline
+      preload="none"
+    ></video>
+  </section>
+
+  {others.length > 0 && (
+    <section class="container more">
+      <div class="section-head">
+        <h2>Other renders</h2>
+        <a href="/en/rendus" class="mono muted see-all">full gallery →</a>
+      </div>
+      <div class="rend-grid">
+        {others.map((o) => <RenderTile render={o} base="/en" />)}
+      </div>
+    </section>
+  )}
+
+  <SiteFooter lang="en" />
+</Base>
+
+<style>
+  .head {
+    padding-block: clamp(56px, 8vw, 100px) clamp(32px, 4vw, 48px);
+    display: grid;
+    gap: 14px;
+  }
+  .bread { font-size: 0.8rem; display: flex; gap: 8px; }
+  .bread a { color: var(--muted); }
+  .bread a:hover { color: var(--accent-ink); }
+  .bread span:last-child { color: var(--ink-2); }
+  .head h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 1.02;
+    padding-bottom: 0.08em;
+  }
+  .head h1 em { font-style: italic; }
+  .meta { display: flex; gap: 10px; font-size: 0.86rem; }
+  .blurb {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    max-width: 58ch;
+    line-height: 1.5;
+  }
+
+  .player { padding-bottom: clamp(48px, 6vw, 80px); }
+  .main-video {
+    width: 100%;
+    border-radius: 6px;
+    background: var(--ink);
+    aspect-ratio: 16/9;
+  }
+
+  .more { padding-bottom: clamp(80px, 10vw, 120px); }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: clamp(24px, 4vw, 44px) 20px;
+    border-top: 1px solid var(--line);
+  }
+  .section-head h2 {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+  }
+  .see-all { font-size: 0.82rem; transition: color 180ms ease-out; }
+  .see-all:hover { color: var(--accent-ink); }
+  .rend-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--gap);
+  }
+</style>

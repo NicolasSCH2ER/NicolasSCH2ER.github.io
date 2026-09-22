@@ -10,9 +10,11 @@ interface Props {
   project: Project;
   aspect?: string;
   class?: string;
+  lang?: "fr" | "en";
 }
 
-const { project: p, aspect = "16/10", class: className } = Astro.props;
+const { project: p, aspect = "16/10", class: className, lang = "fr" } = Astro.props;
+const altPrefix = lang === "en" ? "Preview" : "Aperçu";
 
 const still = p.image;
 const clip = p.videos?.find((v) => v.endsWith(".mp4"));
@@ -34,7 +36,7 @@ const fallbackImage = still ?? p.videos?.find((v) => !v.endsWith(".mp4"));
   </div>
 ) : fallbackImage ? (
   <div class:list={["media-frame has-media", className]} style={`--media-aspect:${aspect}`}>
-    <img src={fallbackImage} alt={`Aperçu — ${p.title}`} loading="lazy" />
+    <img src={fallbackImage} alt={`${altPrefix} — ${p.title}`} loading="lazy" />
   </div>
 ) : (
   <div class:list={["media-frame ph", className]} style={`--media-aspect:${aspect}; --h:${p.hue}`}>

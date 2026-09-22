@@ -1,24 +1,29 @@
 ---
 import "../styles/global.css";
+import { otherLangPath, type Lang } from "../i18n/ui";
 interface Props {
   title?: string;
   description?: string;
   /* Image de partage (chemin absolu depuis la racine du site). */
   image?: string;
+  lang?: Lang;
 }
 const {
   title = "Nicolas Scheer — R&D VFX",
   description = "Portfolio R&D VFX : ML, moteurs de rendu, outils de production.",
   image = "/media/renders/foret-poster.jpg",
+  lang = "fr",
 } = Astro.props;
 
 /* Astro.site est defini dans astro.config.mjs ; en dev il peut manquer, donc on
    degrade proprement plutot que de casser le rendu. */
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
+const altPath = otherLangPath(Astro.url.pathname, lang);
+const altHref = Astro.site ? new URL(altPath, Astro.site).href : altPath;
 ---
 <!doctype html>
-<html lang="fr">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -26,10 +31,12 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang === "fr" ? "en" : "fr"} href={altHref} />
+    <link rel="alternate" hreflang="x-default" href={lang === "fr" ? canonical : altHref} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nicolas Scheer" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content={lang === "fr" ? "fr_FR" : "en_US"} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />

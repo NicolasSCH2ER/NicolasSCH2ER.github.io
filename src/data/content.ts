@@ -13,7 +13,12 @@ export type Project = {
   image?: string;
   videos?: string[];
   videoLabels?: string[];
-  model?: { src: string; poster?: string; label?: string };
+  /* Legende de la galerie. Le champ `videos` porte aussi des JPG/GIF selon le
+     projet, donc le libelle ne peut pas etre deduit du nombre de fichiers. */
+  mediaLabel?: string;
+  /* `upAxis` : axe vertical du maillage exporte. glTF impose +Y ; les exports
+     issus du solveur sont en Z-up et doivent etre redresses a l'affichage. */
+  model?: { src: string; poster?: string; label?: string; upAxis?: "y" | "z" };
   hue: number;
 };
 
@@ -39,6 +44,7 @@ export const PROJECTS: Project[] = [
     problem: "Mantaflow, le solveur natif de Blender, est CPU-only et lent à itérer ; les solveurs GPU commerciaux (Hurricane, FLIP Fluids) sont propriétaires et fermés.",
     approach: "Solveur MLS-MPM (Material Point Method) avec transferts APIC en CUDA pur : chaque matériau — élastique corotationnel, eau, sable en cours (plasticité de Drucker-Prager) — n'est qu'une fonction de contrainte ajoutée au même pipeline particules ↔ grille. Chaque évolution de l'algorithme est d'abord prototypée et validée dans une référence NumPy avant transcription en CUDA. Extension Blender pour viewport live, colliders SDF et export de maillage.",
     results: "SVD 3×3 GPU validée à 1,9·10⁻⁴ près de NumPy sur 5402 matrices · modèle de sable validé par angle de repos (25°/35°/45°) · 184/185 tests passés · dam-break à grille 128³ simulé jusqu'à 2,9 M particules par frame, maillage reconstruit à la volée par le mailleur Zhu-Bridson natif du solveur (jusqu'à 3,2 M triangles/frame), ~7,6 s/frame en pipeline complet simulation + reconstruction + rendu Cycles.",
+    github: "https://github.com/NicolasSCH2ER/bourrasque_v2",
     image: "/media/projects/bourrasque.jpg",
     videos: [
       "/media/projects/bourrasque-dam.mp4",
@@ -52,11 +58,7 @@ export const PROJECTS: Project[] = [
       "Sable — effondrement granulaire (Drucker-Prager)",
       "Collider statique — éclaboussure sur rampe",
     ],
-    model: {
-      src: "/media/models/bourrasque-collider.glb",
-      poster: "/media/models/bourrasque-collider-poster.jpg",
-      label: "collider · frame réelle · orbit",
-    },
+    mediaLabel: "4 simulations réelles du solveur — captures de rendu Cycles",
     hue: 220,
   },
   {
@@ -70,6 +72,7 @@ export const PROJECTS: Project[] = [
     problem: "Comprendre et contrôler chaque étage d'un pipeline de path tracing — construction du BVH, intersection, échantillonnage — avec l'ambition à terme de remplacer l'heuristique de traversée par un petit réseau de neurones (Neural BVH).",
     approach: "BVH binaire construit par tri de centroïdes (SAH simplifié), intersection Möller–Trumbore, intégrateur path tracing avec Next Event Estimation et roulette russe, matériaux PBR GGX/Cook-Torrance, tone mapping ACES. Portage GPU complet via OptiX pour exploiter le hardware ray tracing.",
     results: "Rendu GPU fonctionnel sur scènes glTF complexes (RTX 5070 Ti). Le volet Neural BVH reste un objectif de recherche affiché, pas encore implémenté.",
+    github: "https://github.com/NicolasSCH2ER/BVHNET",
     image: "/media/projects/bvhnet.jpg",
     hue: 15,
   },
@@ -107,6 +110,7 @@ export const PROJECTS: Project[] = [
       "Julia quaternionique — c = (-0.162, 0.163, 0.56, -0.599)",
       "Julia quaternionique — c = (-0.45, -0.447, 0.181, 0.306)",
     ],
+    mediaLabel: "6 polytopes réguliers 4D et 3 ensembles de Julia quaternioniques",
     model: {
       src: "/media/models/hyperforge-tesseract.glb",
       poster: "/media/projects/hyperforge-cells/cell8.jpg",
@@ -127,21 +131,62 @@ export const PROJECTS: Project[] = [
     results: "Sur son meilleur run d'entraînement, l'agent tient la marche sans tomber sur l'intégralité de l'épisode (300/300 steps). Un script d'évaluation dédié (eval_checkpoints.py) compare tous les checkpoints d'un run pour repérer le meilleur avant un éventuel effondrement de PPO en entraînement long. Voir la démo ci-dessous.",
     image: "/media/projects/rl-mesh.jpg",
     videos: [
-      "/media/projects/rlmesh-loops/loop-1.gif",
-      "/media/projects/rlmesh-loops/loop-2.gif",
-      "/media/projects/rlmesh-loops/loop-3.gif",
-      "/media/projects/rlmesh-loops/loop-4.gif",
-      "/media/projects/rlmesh-loops/loop-5.gif",
-      "/media/projects/rlmesh-loops/loop-6.gif",
+      "/media/projects/rlmesh-loops/loop-1.mp4",
+      "/media/projects/rlmesh-loops/loop-2.mp4",
+      "/media/projects/rlmesh-loops/loop-3.mp4",
+      "/media/projects/rlmesh-loops/loop-4.mp4",
+      "/media/projects/rlmesh-loops/loop-5.mp4",
+      "/media/projects/rlmesh-loops/loop-6.mp4",
     ],
+    mediaLabel: "6 boucles d'entraînement — politique PPO en cours d'apprentissage",
     hue: 320,
   },
 ];
 
 export const RENDERS: Render[] = [
-  { slug: "foret",           title: "Forêt",            tools: ["Blender"], loop: "20s",   blurb: "Environnement forestier procédural.",         hue: 145, aspect: "landscape" },
-  { slug: "highland",        title: "Highland",         tools: ["Blender"], loop: "15s",   blurb: "Étude de paysage écossais, lumière rasante.", hue: 40,  aspect: "landscape" },
-  { slug: "mec-qui-court",   title: "Mec qui court",     tools: ["Blender"], loop: "16s",   blurb: "Animation de personnage, cycle de course.",   hue: 25,  aspect: "landscape" },
-  { slug: "mountain",        title: "Mountain",         tools: ["Blender"], loop: "19s",   blurb: "Massif montagneux, rendu atmosphérique.",     hue: 220, aspect: "landscape" },
-  { slug: "ville-abandonnee", title: "Ville abandonnée", tools: ["Blender"], loop: "15s",   blurb: "Environnement urbain post-apocalyptique.",    hue: 55,  aspect: "landscape" },
+  {
+    slug: "foret",
+    title: "Forêt",
+    tools: ["Blender", "Cycles"],
+    loop: "20s",
+    blurb: "Travelling d'accompagnement derrière un personnage, sous-bois instancié et lumière filtrée par la canopée. Étude de profondeur de champ courte et de diffusion atmosphérique en sous-bois.",
+    hue: 145,
+    aspect: "landscape",
+  },
+  {
+    slug: "highland",
+    title: "Highland",
+    tools: ["Blender", "Cycles"],
+    loop: "15s",
+    blurb: "Survol d'une ligne de crête au soleil rasant. Nuages volumétriques accrochés au relief, neige d'altitude et brume qui étage les plans jusqu'à l'horizon.",
+    hue: 40,
+    aspect: "landscape",
+  },
+  {
+    slug: "cycle-de-course",
+    title: "Cycle de course",
+    tools: ["Blender", "Cycles"],
+    loop: "16s",
+    blurb: "Caméra basse en poursuite, au ras d'un sol détrempé. Flou de mouvement, projections de boue et contre-jour travaillés pour porter la vitesse plutôt que la décrire.",
+    hue: 25,
+    aspect: "landscape",
+  },
+  {
+    slug: "mountain",
+    title: "Mountain",
+    tools: ["Blender", "Cycles"],
+    loop: "19s",
+    blurb: "Lac de montagne à la tombée du jour. Plaques de glace en surface, réflexion des sommets sur une eau presque immobile, caméra posée au ras de l'eau.",
+    hue: 220,
+    aspect: "landscape",
+  },
+  {
+    slug: "ville-abandonnee",
+    title: "Ville abandonnée",
+    tools: ["Blender", "Cycles"],
+    loop: "15s",
+    blurb: "Ruine urbaine reprise par la végétation, cadrée à travers une dalle effondrée. Lierre instancié, brume volumétrique et lumière rasante pour séparer les plans d'un décor monochrome.",
+    hue: 55,
+    aspect: "landscape",
+  },
 ];

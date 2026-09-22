@@ -1,0 +1,94 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { PROJECTS, RENDERS } from "../data/content";
+---
+<Base
+  title="Page introuvable — Nicolas Scheer"
+  description="Cette page n'existe pas."
+>
+  <SiteHeader />
+
+  <section class="nf container">
+    <p class="code mono muted">erreur 404</p>
+    <h1><em>Page introuvable</em></h1>
+    <p class="sub">
+      Ce lien ne mène à rien — la page a peut-être été renommée. Les deux
+      sections du site&nbsp;:
+    </p>
+    <ul class="ways">
+      <li>
+        <a href="/projets">
+          <span class="way-title"><em>Projets</em></span>
+          <span class="way-meta mono muted">{PROJECTS.length} entrées R&amp;D</span>
+          <span class="way-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li>
+        <a href="/rendus">
+          <span class="way-title"><em>Rendus</em></span>
+          <span class="way-meta mono muted">{RENDERS.length} pièces 3D</span>
+          <span class="way-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(72px, 10vw, 130px) clamp(40px, 5vw, 64px);
+    display: grid;
+    gap: 16px;
+  }
+  .code {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+  .nf h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    line-height: 1.02;
+    padding-bottom: 0.08em; /* dégagement des jambages en italique */
+  }
+  .nf h1 em { font-style: italic; }
+  .sub {
+    font-size: var(--step-1p);
+    color: var(--ink-2);
+    max-width: 48ch;
+    line-height: 1.5;
+  }
+
+  .ways {
+    list-style: none;
+    padding: 0;
+    margin: clamp(16px, 3vw, 28px) 0 0;
+    max-width: 640px;
+  }
+  .ways a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 24px;
+    gap: 20px;
+    align-items: baseline;
+    padding-block: 16px;
+    border-top: 1px solid var(--line);
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                color 180ms ease-out;
+  }
+  .ways li:last-child a { border-bottom: 1px solid var(--line); }
+  .ways a:hover { transform: translateX(6px); color: var(--accent-ink); }
+  .way-title {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .way-title em { font-style: italic; }
+  .way-meta { font-size: 0.8rem; }
+  .way-arrow { font-size: 1.1rem; color: var(--muted); }
+  .ways a:hover .way-arrow { color: var(--accent-ink); }
+</style>

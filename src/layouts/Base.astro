@@ -3,11 +3,19 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  /* Image de partage (chemin absolu depuis la racine du site). */
+  image?: string;
 }
 const {
   title = "Nicolas Scheer — R&D VFX",
   description = "Portfolio R&D VFX : ML, moteurs de rendu, outils de production.",
+  image = "/media/renders/foret-poster.jpg",
 } = Astro.props;
+
+/* Astro.site est defini dans astro.config.mjs ; en dev il peut manquer, donc on
+   degrade proprement plutot que de casser le rendu. */
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
 ---
 <!doctype html>
 <html lang="fr">
@@ -15,7 +23,21 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nicolas Scheer" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

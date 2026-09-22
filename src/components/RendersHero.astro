@@ -10,8 +10,8 @@
   <div class="hero-fallback"></div>
   <canvas class="hero-canvas"></canvas>
   <div class="hero-fade"></div>
+  <div class="hero-tag mono" data-status hidden></div>
 </div>
-<div class="hero-tag mono" data-status>init</div>
 
 <style>
   .hero {
@@ -74,8 +74,10 @@
 
   roots.forEach((root) => {
     const status = root.querySelector<HTMLElement>("[data-status]");
-    if (prefersReduced) { if (status) status.textContent = "reduced-motion"; return; }
-    if (!("gpu" in navigator)) { if (status) status.textContent = "no webgpu"; return; }
+    // Les echecs restent silencieux : on garde le degrade de fallback sans
+    // afficher de diagnostic au visiteur. Le tag n'apparait qu'en cas de succes.
+    if (prefersReduced) return;
+    if (!("gpu" in navigator)) return;
 
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
@@ -84,7 +86,6 @@
           io.disconnect();
           boot(root, status).catch((err) => {
             console.warn("[hero] boot failed", err);
-            if (status) status.textContent = "fallback";
           });
         }
       }
@@ -182,7 +183,6 @@
       await renderer.init();
     } catch (err) {
       console.warn("[hero] renderer.init failed", err);
-      if (status) status.textContent = "no webgpu";
       return;
     }
 
@@ -204,7 +204,10 @@
     ro.observe(root);
 
     root.dataset.ready = "1";
-    if (status) status.textContent = `${(COUNT / 1000) | 0}k · gpu`;
+    if (status) {
+      status.textContent = `${(COUNT / 1000) | 0}k · gpu`;
+      status.hidden = false;
+    }
 
     renderer.setAnimationLoop(() => {
       if (!running) return;

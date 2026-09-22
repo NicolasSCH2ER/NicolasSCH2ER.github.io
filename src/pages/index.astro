@@ -14,13 +14,14 @@ const featuredRenders = RENDERS.slice(0, 3);
 
   <section class="intro container">
     <h1 class="lede">
-      Étudiant en fin d'études, à la recherche d'un poste en R&D&nbsp;VFX.
-      Je travaille à l'intersection du <em>machine learning</em> et du rendu&nbsp;:
-      moteurs, outils Blender, synthèse de mouvement.
+      Élève ingénieur à <em>Télécom SudParis</em>, à la recherche d'un poste en
+      R&D&nbsp;VFX. Je travaille à l'intersection du <em>machine learning</em> et
+      du rendu&nbsp;: moteurs, outils Blender, synthèse de mouvement.
     </h1>
     <dl class="facts mono">
-      <div><dt>Basé à</dt><dd>Paris, FR</dd></div>
-      <div><dt>Disponible</dt><dd>stage 6 mois / CDI</dd></div>
+      <div><dt>Formation</dt><dd>Ingénieur généraliste du numérique, Télécom SudParis — diplômé en novembre 2026</dd></div>
+      <div><dt>Disponible</dt><dd>immédiatement — stage, CDD ou CDI</dd></div>
+      <div><dt>Mobilité</dt><dd>Paris — ouvert à la France entière et à l'international</dd></div>
       <div><dt>Domaines</dt><dd>ML, rendering, motion</dd></div>
     </dl>
   </section>
@@ -51,7 +52,9 @@ const featuredRenders = RENDERS.slice(0, 3);
 <style>
   .intro {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    /* colonne de droite bornée : les valeurs de parcours sont longues et, en
+       `auto`, elles reprenaient la place du lede au lieu de passer à la ligne */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 32ch);
     gap: clamp(24px, 4vw, 60px);
     align-items: end;
     padding-block: clamp(72px, 10vw, 130px) clamp(40px, 5vw, 64px);
@@ -69,9 +72,9 @@ const featuredRenders = RENDERS.slice(0, 3);
     color: var(--muted);
     font-size: 0.82rem; line-height: 1.4;
   }
-  .facts > div { display: flex; gap: 10px; }
-  .facts dt { color: var(--muted); min-width: 74px; }
-  .facts dd { margin: 0; color: var(--ink-2); }
+  .facts > div { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 10px; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; color: var(--ink-2); text-wrap: pretty; }
   @media (max-width: 720px) {
     .intro { grid-template-columns: 1fr; }
     .lede { max-width: none; }

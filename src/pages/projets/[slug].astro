@@ -13,7 +13,7 @@ export function getStaticPaths() {
 const { project: p } = Astro.props;
 const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 ---
-<Base title={`${p.title} — Nicolas Scheer`} description={p.summary}>
+<Base title={`${p.title} — Nicolas Scheer`} description={p.summary} image={p.image ?? p.model?.poster}>
   <SiteHeader />
 
   <section class="head container">
@@ -35,14 +35,22 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   {p.videos && p.videos.length > 1 ? (
     <section class="media media-wide">
-      <p class="media-label mono muted">{p.videos.length} rendus — simulations réelles du projet</p>
+      <p class="media-label mono muted">{p.mediaLabel ?? `${p.videos.length} rendus issus du projet`}</p>
       <div class="video-grid">
         {p.videos.map((v, i) => (
           <figure class="video-tile">
             {v.endsWith(".mp4") ? (
-              <video src={v} autoplay muted loop playsinline preload="metadata" />
+              <video
+                src={v}
+                poster={v.replace(/\.mp4$/, "-poster.jpg")}
+                muted
+                loop
+                playsinline
+                preload="none"
+                data-play-in-view
+              />
             ) : (
-              <img src={v} alt={`Rendu — ${p.title}`} loading="lazy" />
+              <img src={v} alt={p.videoLabels?.[i] ?? `Rendu — ${p.title}`} loading="lazy" />
             )}
             {p.videoLabels?.[i] && <figcaption class="mono muted">{p.videoLabels[i]}</figcaption>}
           </figure>
@@ -62,6 +70,7 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
         src={p.model.src}
         poster={p.model.poster}
         label={p.model.label}
+        upAxis={p.model.upAxis}
         hue={p.hue}
         aspect="16/9"
       />
@@ -110,6 +119,26 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   <SiteFooter />
 </Base>
+
+<script>
+  /* Les boucles de simulation se lancent quand elles entrent dans le champ,
+     pas au chargement : la page en compte jusqu'a quatre, et les charger
+     toutes d'emblee coutait plusieurs megaoctets avant le moindre scroll. */
+  const clips = document.querySelectorAll<HTMLVideoElement>("[data-play-in-view]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (clips.length && !reduced) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      }
+    }, { rootMargin: "100px", threshold: 0.2 });
+
+    clips.forEach((v) => io.observe(v));
+  }
+</script>
 
 <style>
   .head {

@@ -15,8 +15,16 @@ const yearRange =
   years.length > 1 ? `${years[years.length - 1]} → ${years[0]}` : years[0];
 
 const domains = [...new Set(PROJECTS.map((p) => p.tag.toLowerCase()))];
+
+/* Avec une seule annee, le rail lateral sticky n'est qu'une colonne vide :
+   on le replie en ligne compacte (la meme mise en page qu'en mobile). */
+const singleYear = years.length === 1;
 ---
-<Base title="Projets — Nicolas Scheer">
+<Base
+  title="Projets — Nicolas Scheer"
+  description="Recherche appliquee, outils de production, moteurs de rendu : les projets techniques de Nicolas Scheer."
+  image={PROJECTS[0]?.image}
+>
   <SiteHeader />
 
   <section class="proj-head container">
@@ -38,7 +46,7 @@ const domains = [...new Set(PROJECTS.map((p) => p.tag.toLowerCase()))];
 
   <section class="container listing">
     {projectsByYear.map((group) => (
-      <article class="year-chapter">
+      <article class:list={["year-chapter", singleYear && "no-rail"]}>
         <aside class="year-rail mono">
           <span class="year-num">{group.year}</span>
           <span class="year-count">{String(group.items.length).padStart(2, "0")} entrée{group.items.length > 1 ? "s" : ""}</span>
@@ -153,6 +161,16 @@ const domains = [...new Set(PROJECTS.map((p) => p.tag.toLowerCase()))];
   }
 
   .year-body { display: grid; gap: clamp(28px, 4vw, 48px); min-width: 0; }
+
+  .year-chapter.no-rail { grid-template-columns: 1fr; gap: 20px; }
+  .no-rail .year-rail {
+    position: static;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
 
   /* ---- feature row ---- */
   .row { display: block; color: inherit; }

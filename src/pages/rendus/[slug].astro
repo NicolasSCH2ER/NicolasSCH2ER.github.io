@@ -12,7 +12,7 @@ export function getStaticPaths() {
 const { render: r } = Astro.props;
 const others = RENDERS.filter((x) => x.slug !== r.slug).slice(0, 3);
 ---
-<Base title={`${r.title} — Nicolas Scheer`} description={r.blurb}>
+<Base title={`${r.title} — Nicolas Scheer`} description={r.blurb} image={`/media/renders/${r.slug}-poster.jpg`}>
   <SiteHeader />
 
   <section class="head container">
@@ -32,10 +32,11 @@ const others = RENDERS.filter((x) => x.slug !== r.slug).slice(0, 3);
     <video
       class="main-video"
       src={`/media/renders/${r.slug}.mp4`}
+      poster={`/media/renders/${r.slug}-poster.jpg`}
       controls
       loop
       playsinline
-      preload="metadata"
+      preload="none"
     ></video>
   </section>
 

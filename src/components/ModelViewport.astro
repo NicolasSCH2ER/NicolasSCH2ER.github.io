@@ -13,14 +13,20 @@ interface Props {
   label?: string;
   aspect?: string;
   hue?: number;
+  /* Axe vertical du maillage source. glTF impose +Y ; un export Z-up
+     (domaine de simulation au sol sur XY) arrive couche sans redressement. */
+  upAxis?: "y" | "z";
 }
-const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.props;
+const {
+  src, poster, label = "viewport 3D", aspect = "4/3", hue = 30, upAxis = "y",
+} = Astro.props;
 ---
 <div
   class="viewport"
   data-model-viewport
   data-src={src}
   data-poster={poster}
+  data-up={upAxis}
   style={`--aspect:${aspect}; --h:${hue}`}
 >
   {poster && <img class="poster" src={poster} alt="" loading="lazy" />}
@@ -149,6 +155,14 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
     const gltf = await loader.loadAsync(src);
     const model = gltf.scene;
 
+    // Redresse les exports Z-up avant toute mesure : glTF place le haut sur
+    // +Y, alors que le solveur exporte sa hauteur sur Z. Sans cette rotation
+    // le maillage s'affiche couche sur le flanc.
+    if (root.dataset.up === "z") {
+      model.rotation.x = -Math.PI / 2;
+      model.updateMatrixWorld(true);
+    }
+
     // recentre + normalise l'echelle pour que l'objet remplisse le cadre
     // quel que soit son domaine d'origine (4D projete, ou domaine sim [0,1]^3)
     const box = new THREE.Box3().setFromObject(model);
@@ -171,14 +185,9 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.6;
 
-    let userInteracted = false;
-    controls.addEventListener("start", () => {
-      userInteracted = true;
-      controls.autoRotate = false;
-    });
+    controls.addEventListener("start", () => { controls.autoRotate = false; });
 
     root.dataset.ready = "1";
-    if (status) status.textContent = root.dataset.status || (status.textContent ?? "");
 
     let running = true;
     const onVisibility = () => { running = !document.hidden; };
@@ -197,8 +206,6 @@ const { src, poster, label = "viewport 3D", aspect = "4/3", hue = 30 } = Astro.p
       for (const e of entries) running = e.isIntersecting && !document.hidden;
     }, { threshold: 0.01 });
     io2.observe(root);
-
-    void userInteracted; // reserve pour une future UI ("reinitialiser la vue")
 
     renderer.setAnimationLoop(() => {
       if (!running) return;

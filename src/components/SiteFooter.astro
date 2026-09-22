@@ -3,6 +3,7 @@ import { UI, type Lang } from "../i18n/ui";
 interface Props { lang?: Lang }
 const { lang = "fr" } = Astro.props;
 const t = UI[lang];
+const cvHref = lang === "en" ? "/cv-en.pdf" : "/cv.pdf";
 ---
 <footer id="contact" class="foot">
   <div class="container">
@@ -14,7 +15,7 @@ const t = UI[lang];
       <ul class="foot-links mono">
         <li><a href="https://github.com/NicolasSCH2ER" target="_blank" rel="noopener">github.com/NicolasSCH2ER</a></li>
         <li><a href="https://www.linkedin.com/in/nicolas-scheer-334747305/" target="_blank" rel="noopener">linkedin.com/in/nicolas-scheer</a></li>
-        <li><a href="/cv.pdf">CV.pdf</a></li>
+        <li><a href={cvHref}>{lang === "en" ? "Resume.pdf" : "CV.pdf"}</a></li>
       </ul>
     </div>
     <div class="foot-sig mono muted">© 2026</div>

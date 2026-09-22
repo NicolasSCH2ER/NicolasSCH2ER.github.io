@@ -5,6 +5,7 @@ interface Props { lang?: Lang }
 const { lang = "fr" } = Astro.props;
 const t = UI[lang];
 const base = lang === "en" ? "/en" : "";
+const cvHref = lang === "en" ? "/cv-en.pdf" : "/cv.pdf";
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isActive = (href: string) =>
@@ -20,7 +21,7 @@ const switchHref = otherLangPath(Astro.url.pathname, lang);
       <a href={`${base}/rendus`} class:list={[isActive(`${base}/rendus`) && "is-active"]}>{t.nav.renders}</a>
       <a href={`${base}/mocaplab`} class:list={[isActive(`${base}/mocaplab`) && "is-active"]}>{t.nav.mocaplab}</a>
       <a href={`${base}/#contact`}>{t.nav.contact}</a>
-      <a href="/cv.pdf" class="cv">{t.nav.cv}</a>
+      <a href={cvHref} class="cv">{t.nav.cv}</a>
       <a href={switchHref} class="lang" rel="alternate" hreflang={lang === "fr" ? "en" : "fr"}>
         {lang === "fr" ? "EN" : "FR"}
       </a>

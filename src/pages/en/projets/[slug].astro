@@ -57,11 +57,11 @@ const others = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 3);
         ))}
       </div>
     </section>
-  ) : (
+  ) : (p.image || p.videos?.length) ? (
     <section class="media container">
       <ProjectMedia project={p} aspect="16/9" class="media-single" />
     </section>
-  )}
+  ) : null}
 
   {p.model && (
     <section class="container viewport-section">

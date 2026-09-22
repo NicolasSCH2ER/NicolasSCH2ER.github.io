@@ -8,7 +8,7 @@ const roles = [
     title: "Stagiaire R&D",
     dates: "03/2026 – 07/2026",
     context: "Les données de capture de mouvement oculaire (fichiers TRC, marqueurs faciaux haute fréquence) contiennent des erreurs de tracking — occlusions, glissements de marqueur, pertes de rigidité — qui doivent aujourd'hui être repérées à l'œil par un opérateur avant tout usage en production.",
-    approach: "Développement en Python d'un pipeline ML de détection automatique d'aberrations : classifieurs supervisés et régression pour un premier tri rapide, CNN pour les cas où la structure temporelle du signal porte l'information. Les trois approches sont comparées sur le même jeu de features pour choisir la bonne complexité selon le type d'erreur.",
+    approach: "Analyse des erreurs les plus coûteuses pour la production, puis développement en Python d'un pipeline de détection combinant classifieurs supervisés, régression et un CNN — trois angles comparés sur un même jeu de descripteurs pour choisir la bonne complexité selon le type d'erreur, avec un seuil de décision calibré pour privilégier la précision : un marqueur signalé à tort coûte plus cher, en aval, qu'une erreur laissée passer.",
     result: "Modèle intégré dans le pipeline de production de l'équipe, comme aide au repérage plutôt qu'en remplacement du contrôle humain.",
   },
   {
@@ -45,6 +45,26 @@ const roles = [
       Page volontairement limitée au rôle et à l'approche technique : aucune donnée, aucun visuel
       et aucun détail de production appartenant à un client n'y figure.
     </p>
+  </section>
+
+  <section class="container studio">
+    <h2 class="mono muted">Le studio</h2>
+    <p>
+      MocapLab est un studio parisien entièrement dédié à la capture de mouvement, fondé et
+      dirigé par Rémi Brun — l'équipe fondatrice a débuté la mocap dès 1993, sur le pilote du
+      film <em>20 000 lieues sous les mers</em>, l'un des tout premiers longs métrages à utiliser
+      cette technologie. Le studio couvre quatre familles de capture (corps, visage, regard,
+      doigts) et revendique plus de 300 projets réalisés en cinéma, télévision, jeu vidéo et
+      spectacle vivant, dont les cinématiques de <em>Syberia</em> ou des captures pour <em>Riders
+      Republic</em> (Ubisoft).
+    </p>
+    <p>
+      Au-delà de la prestation, MocapLab porte une activité de recherche interne, notamment
+      autour de <em>Sign3D</em>, une application d'avatar 3D pour la langue des signes française
+      financée par France 2030 — un projet qui s'appuie directement sur l'expertise de capture
+      des doigts du studio.
+    </p>
+    <p class="source mono muted">Sources publiques : mocaplab.com — pas d'information interne au studio.</p>
   </section>
 
   <section class="container roles">
@@ -110,6 +130,26 @@ const roles = [
     line-height: 1.5;
     padding-top: 4px;
   }
+
+  .studio {
+    padding-block: clamp(24px, 3vw, 32px) clamp(40px, 5vw, 56px);
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 14px;
+  }
+  .studio h2 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .studio p:not(.source) {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+  .studio em { font-style: italic; color: var(--ink); }
+  .studio .source { font-size: 0.74rem; }
 
   .roles {
     display: grid;

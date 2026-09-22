@@ -8,7 +8,7 @@ const roles = [
     title: "R&D Intern",
     dates: "03/2026 – 07/2026",
     context: "Eye-tracking motion capture data (TRC files, high-frequency facial markers) contains tracking errors — occlusions, marker slips, rigidity loss — that today have to be spotted by eye by an operator before any use in production.",
-    approach: "Built a Python ML pipeline for automatic aberration detection: supervised classifiers and regression for a fast first pass, a CNN where the signal's temporal structure carries the information. All three approaches are compared on the same feature set to pick the right complexity for each error type.",
+    approach: "Analyzed which errors cost production the most, then built a Python detection pipeline combining supervised classifiers, regression, and a CNN — three angles compared on the same feature set to pick the right complexity for each error type, with a decision threshold tuned to favor precision: a wrongly flagged marker costs more downstream than one left undetected.",
     result: "Model integrated into the team's production pipeline, as an aid to spotting errors rather than a replacement for human review.",
   },
   {
@@ -46,6 +46,24 @@ const roles = [
       Deliberately limited to the role and the technical approach: no data, visuals, or
       production detail belonging to a client appears on this page.
     </p>
+  </section>
+
+  <section class="container studio">
+    <h2 class="mono muted">The studio</h2>
+    <p>
+      MocapLab is a Paris-based studio entirely dedicated to motion capture, founded and led by
+      Rémi Brun — the founding team started doing mocap as early as 1993, on the pilot for
+      <em>20,000 Leagues Under the Sea</em>, one of the very first feature films to use the
+      technology. The studio covers four capture families (body, face, eye, fingers) and claims
+      over 300 completed projects across film, TV, video games and live entertainment, including
+      cinematics for <em>Syberia</em> and capture work for Ubisoft's <em>Riders Republic</em>.
+    </p>
+    <p>
+      Beyond service work, MocapLab runs an internal research effort, notably around
+      <em>Sign3D</em>, a 3D-avatar app for French Sign Language funded by France 2030 — a project
+      that draws directly on the studio's finger-capture expertise.
+    </p>
+    <p class="source mono muted">Public sources: mocaplab.com — no internal studio information.</p>
   </section>
 
   <section class="container roles">
@@ -111,6 +129,26 @@ const roles = [
     line-height: 1.5;
     padding-top: 4px;
   }
+
+  .studio {
+    padding-block: clamp(24px, 3vw, 32px) clamp(40px, 5vw, 56px);
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 14px;
+  }
+  .studio h2 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .studio p:not(.source) {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+  .studio em { font-style: italic; color: var(--ink); }
+  .studio .source { font-size: 0.74rem; }
 
   .roles {
     display: grid;

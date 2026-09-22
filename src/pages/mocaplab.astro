@@ -60,7 +60,7 @@ const roles = [
       financée par France 2030 — un projet qui s'appuie directement sur l'expertise de capture
       des doigts du studio.
     </p>
-    <p class="source mono muted">Sources publiques : mocaplab.com — pas d'information interne au studio.</p>
+    <a href="https://www.mocaplab.com/fr/" target="_blank" rel="noopener" class="source mono muted">mocaplab.com →</a>
   </section>
 
   <section class="container roles">
@@ -132,14 +132,19 @@ const roles = [
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .studio p:not(.source) {
+  .studio p {
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--ink-2);
     max-width: 68ch;
   }
   .studio em { font-style: italic; color: var(--ink); }
-  .studio .source { font-size: 0.74rem; }
+  .studio .source {
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    transition: color 180ms ease-out;
+  }
+  .studio .source:hover { color: var(--accent-ink); }
 
   .roles {
     display: grid;

@@ -8,7 +8,7 @@ const roles = [
     title: "R&D Intern",
     dates: "03/2026 – 07/2026",
     context: "Eye-tracking motion capture data (TRC files, high-frequency facial markers) contains tracking errors — occlusions, marker slips, rigidity loss — that today have to be spotted by eye by an operator before any use in production.",
-    approach: "Analyzed which errors cost production the most, then built a Python detection pipeline combining supervised classifiers, regression, and a CNN — three angles compared on the same feature set to pick the right complexity for each error type, with a decision threshold tuned to favor precision: a wrongly flagged marker costs more downstream than one left undetected.",
+    approach: "Analyzed which errors cost production the most, then trained several tracking and automatic-labeling models for the eye markers in Python — supervised classifiers, regression, and a CNN compared on the same feature set to pick the right complexity for each error type, with a decision threshold tuned to favor precision: a wrongly flagged marker costs more downstream than one left undetected.",
     result: "Model integrated into the team's production pipeline, as an aid to spotting errors rather than a replacement for human review.",
   },
   {

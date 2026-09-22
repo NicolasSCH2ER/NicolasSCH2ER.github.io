@@ -8,7 +8,7 @@ const roles = [
     title: "Stagiaire R&D",
     dates: "03/2026 – 07/2026",
     context: "Les données de capture de mouvement oculaire (fichiers TRC, marqueurs faciaux haute fréquence) contiennent des erreurs de tracking — occlusions, glissements de marqueur, pertes de rigidité — qui doivent aujourd'hui être repérées à l'œil par un opérateur avant tout usage en production.",
-    approach: "Analyse des erreurs les plus coûteuses pour la production, puis développement en Python d'un pipeline de détection combinant classifieurs supervisés, régression et un CNN — trois angles comparés sur un même jeu de descripteurs pour choisir la bonne complexité selon le type d'erreur, avec un seuil de décision calibré pour privilégier la précision : un marqueur signalé à tort coûte plus cher, en aval, qu'une erreur laissée passer.",
+    approach: "Analyse des erreurs les plus coûteuses pour la production, puis entraînement en Python de plusieurs modèles de tracking et de labeling automatique des marqueurs oculaires — classifieurs supervisés, régression et CNN comparés sur un même jeu de descripteurs pour choisir la bonne complexité selon le type d'erreur, avec un seuil de décision calibré pour privilégier la précision : un marqueur signalé à tort coûte plus cher, en aval, qu'une erreur laissée passer.",
     result: "Modèle intégré dans le pipeline de production de l'équipe, comme aide au repérage plutôt qu'en remplacement du contrôle humain.",
   },
   {
